@@ -16,7 +16,6 @@ using namespace std;
 typedef double DT;
 typedef std::complex<DT> CDT;
 typedef Eigen::MatrixXcd MatrixSB;
-extern DT PI;
 extern CDT I;
 extern CDT TPI;
 

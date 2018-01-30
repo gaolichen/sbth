@@ -1,7 +1,10 @@
 #pragma warning(disable:4018)
 #include "BitUtility.h"
 #include <time.h>
+#include <math.h>
 using namespace std;
+
+double PI = acos(-1.0);
 
 int BitCount(int i)
 {

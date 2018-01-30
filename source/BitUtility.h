@@ -21,6 +21,8 @@ typedef i64 snum;
 #define MAX_TRACE_BITS 25
 #define FULL_TRACE_BITS ((1<<MAX_TRACE_BITS)-1)
 
+extern double PI;
+
 int BitCount(int);
 int CyclicRotation(int, int);
 snum BinomialCoefficient(snum a, i64 b);

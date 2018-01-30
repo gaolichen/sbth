@@ -10,7 +10,6 @@
 #include "StringBitMatrices.h"
 using namespace std;
 
-DT PI = acos(-1.0);
 CDT I(0,1);
 CDT TPI = I * CDT(2 * PI);
 
