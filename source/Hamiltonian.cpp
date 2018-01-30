@@ -113,6 +113,12 @@ void Hamiltonian::Apply(const TraceState& state, MixState& real, MixState& imagi
 	}
 }
 
+void Hamiltonian::ToMatrixN(int bits, StateType type, double eps, vector<vector<complex<double> > >& mat)
+{
+	int n = StateCollection::Inst()->StateNumber(bits);
+	mat.resize(n, vector<complex<double> >());
+}
+
 void Hamiltonian::Matrix(int bits, StateType type, vector<vector<Coefficient> >& rem, vector<vector<Coefficient> >& imm)
 {
 	int n = StateCollection::Inst()->StateNumber(bits);

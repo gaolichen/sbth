@@ -1,4 +1,5 @@
 #pragma once
+#include <complex>
 #include "HamOperator.h"
 #include "StateCollection.h"
 #include "SingleTrace.h"
@@ -26,6 +27,13 @@ public:
 	int RealOpSize();
 	void Apply(const TraceState& state, MixState& real, MixState& imaginary);
 	void Matrix(int bits, StateType type, vector<vector<Coefficient> >& rem, vector<vector<Coefficient> >& imm);
+	
+	// return numerical value of Hamiltonian matrix.
+	// bits: number of bits of trace states for which the Hamiltonian apply to.
+	// type: type of states, Boson or Fermion.
+	// eps: value of 1/N
+	// mat: the returned complex matrix.
+	void ToMatrixN(int bits, StateType type, double eps, vector<vector<complex<double> > >& mat);
 	void AddReadOp(HamOperator *op, int prefactor);
 	void AddImaginaryOp(HamOperator *op, int prefactor);
 	friend ostream& operator<<(ostream& os, const Hamiltonian& ham);
