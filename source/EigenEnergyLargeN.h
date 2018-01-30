@@ -13,12 +13,12 @@ private:
 	vector<pair<double, int> > energies;
 	
 	// calculate energy from two numbers.
-	// mask: the nonzero bit position of mask represents a nonzero mode, the mode can make 
+	// nonZeroBits: the nonzero bit position of mask represents a nonzero mode, the mode can make 
 	// either one unit position contribution or one unit negative contribution to the energy, 
 	// where each unit mean sin(k * Pi/M);
 	// bits: the nonzero bit position of bits represents a positive-contribution bit and zero 
 	// bit position represents a negative-contribution bit.
-	double CalcEnergy(i64 mask, int bits);
+	double CalcEnergy(vector<int>& nonZeroBits, int positiveBits);
 
 	void Partition(int n, int k, i64 mask);
 

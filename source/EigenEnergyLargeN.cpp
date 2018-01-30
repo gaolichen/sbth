@@ -31,7 +31,7 @@ void EigenEnergyLargeN::Partition(int n, int k, i64 mask)
 }
 
 // TODO:
-double EigenEnergyLargeN::CalcEnergy(i64 mask, int bits)
+double EigenEnergyLargeN::CalcEnergy(vector<int>& modes, int positiveBits)
 {
 	return 0.0;
 }
@@ -49,12 +49,13 @@ void EigenEnergyLargeN::Calculate()
 	for (int i = 0; i <= masks.size(); i++)
 	{
 		int zeroBits = BitCount(masks[i]);
-		int count = M2 - zeroBits;
-		if (bits % 2 == 1) count++;
+		int nonZeroBits = M2 - zeroBits;
+		int nonZeroMask = ((1 << M2) - 1) ^ masks[i];
+		vector<int> nonZeroDigits = Num2Digit(nonZeroMask, M2);
 
-		for (int j = 0; j < (1 << count); j++)
+		for (int j = 0; j < (1 << nonZeroBits); j++)
 		{
-			energies.push_back(make_pair(CalcEnergy(masks[i], j), 1 << zeroBits));
+			energies.push_back(make_pair(CalcEnergy(nonZeroDigits, j), 1 << zeroBits));
 		}
 	}
 }
