@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <Eigen/Eigenvalues>
+#include <Eigen/Dense>
 #include "SingleTrace.h"
 #include "BitUtility.h"
 #include "StateCollection.h"
@@ -274,6 +276,14 @@ void OutputStateStructure()
 	sg2.OutputStateStructure(); 
 }
 
+void CalculateAllEigenvalues(int bits)
+{
+	H0Hamiltonian h0;
+	Eigen::MatrixXcd mat = h0.ToMatrixN(bits, Boson, 0.001);
+	Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat);
+	cout << mat.eigenvalues() << endl;
+}
+
 int main()
 {
 	GenerateStates(true);
@@ -291,5 +301,6 @@ int main()
 	//OutputStateStructure();
 	//GenerateAllHamDataFile();
 	//GenerateNormDataFile(8, 10, Boson);
+	CalculateAllEigenvalues(3);
 	return 0;
 }
