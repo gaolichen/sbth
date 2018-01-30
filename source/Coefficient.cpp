@@ -121,6 +121,11 @@ ostream& operator<<(ostream& os, const Coefficient& coef)
     return os;
 }
 
+double Coefficient::ToDouble(double invN) const
+{
+	return N + One * invN + InvN * invN * invN;
+}
+
 string Coefficient::ToLatex() const
 {
 	if (IsZero())

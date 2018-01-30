@@ -113,10 +113,28 @@ void Hamiltonian::Apply(const TraceState& state, MixState& real, MixState& imagi
 	}
 }
 
-void Hamiltonian::ToMatrixN(int bits, StateType type, double eps, vector<vector<complex<double> > >& mat)
+Eigen::MatrixXcd Hamiltonian::ToMatrixN(int bits, StateType type, double eps)
 {
 	int n = StateCollection::Inst()->StateNumber(bits);
-	mat.resize(n, vector<complex<double> >());
+	map<StateId, Coefficient>::const_iterator it;
+	Eigen::MatrixXcd mat(n, n);
+	
+	for (int i = 0; i < n; i++)
+	{
+		const TraceState& state = StateCollection::Inst()->GetState(bits, i, type);
+		MixState re, im;
+		Apply(state, re, im);
+		for (it = re.Begin(); it != re.End(); ++it)
+		{
+			mat(it->first.Index / 2, i) = complex<double>(it->second.ToDouble(eps), 0);
+		}
+		
+		for (it = im.Begin(); it != im.End(); ++it)
+		{
+			mat(it->first.Index / 2, i) += complex<double>(0, it->second.ToDouble(eps));
+		}
+	}
+	return mat;
 }
 
 void Hamiltonian::Matrix(int bits, StateType type, vector<vector<Coefficient> >& rem, vector<vector<Coefficient> >& imm)

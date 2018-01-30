@@ -14,6 +14,9 @@ struct Coefficient
 	void Opposite();
 	void ChangeOrder(int order2Change);
 	bool IsZero() const;
+	// return a numerical value of the coefficients.
+	// invN: the value of 1/N.
+	double ToDouble(double invN) const;
 	string ToLatex() const;
 	friend ostream& operator<<(ostream& os, const Coefficient& coef);
 	Coefficient& operator*= (int n);

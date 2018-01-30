@@ -1,5 +1,6 @@
 #pragma once
 #include <complex>
+#include <Eigen/Dense>
 #include "HamOperator.h"
 #include "StateCollection.h"
 #include "SingleTrace.h"
@@ -33,7 +34,7 @@ public:
 	// type: type of states, Boson or Fermion.
 	// eps: value of 1/N
 	// mat: the returned complex matrix.
-	void ToMatrixN(int bits, StateType type, double eps, vector<vector<complex<double> > >& mat);
+	Eigen::MatrixXcd ToMatrixN(int bits, StateType type, double eps);
 	void AddReadOp(HamOperator *op, int prefactor);
 	void AddImaginaryOp(HamOperator *op, int prefactor);
 	friend ostream& operator<<(ostream& os, const Hamiltonian& ham);
