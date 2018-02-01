@@ -5,9 +5,9 @@
 #include <math.h>
 using namespace std;
 
-#define EPS 1e-8
+//#define EPS 1e-8
 
-double chop(double v)
+/*double chop2(double v)
 {
 	if (abs(v) < EPS) return 0.0;
 	return v;
@@ -18,7 +18,7 @@ complex<double> chop(complex<double>& v)
 	return complex<double>(chop(v.real()), chop(v.imag()));
 }
 
-void template<T> chop(Eigen::MatrixBase<T>& mat)
+template<typename T> void chop(Eigen::MatrixBase<T>& mat)
 {
 	for (int i = 0; i < mat.rows(); i++)
 	{
@@ -27,5 +27,5 @@ void template<T> chop(Eigen::MatrixBase<T>& mat)
 			mat(i, j) = chop(mat(i, j));
 		}
 	}
-}
+}*/
 

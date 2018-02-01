@@ -4,6 +4,8 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <complex>
+#include <cmath>
 #include <time.h>
 using namespace std;
 
@@ -20,6 +22,8 @@ typedef i64 snum;
 
 #define MAX_TRACE_BITS 25
 #define FULL_TRACE_BITS ((1<<MAX_TRACE_BITS)-1)
+// epsilon used for chop functions
+#define EPS 1e-8
 
 extern double PI;
 
@@ -37,6 +41,8 @@ string ToUpper(string s);
 vector<int> Num2Digit(i64 n, int maxBit);
 i64 Digit2Num(int* v, int size);
 int SymmetryFactor(vector<i64>& mode, int s);
+double Chop(double v, double eps = EPS);
+complex<double> Chop(complex<double>& v, double eps = EPS);
 
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {

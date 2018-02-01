@@ -147,6 +147,17 @@ string ToUpper(string s)
 	return ret;
 }
 
+double Chop(double v, double eps)
+{
+	if (abs(v) < eps) return .0;
+	return v;
+}
+
+complex<double> Chop(complex<double>& v, double eps)
+{
+	return complex<double>(Chop(v.real(), eps), Chop(v.imag(), eps));
+}
+
 Stopwatch::Stopwatch()
 {
 	start = 0;

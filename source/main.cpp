@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 #include <Eigen/Eigenvalues>
 #include <Eigen/Dense>
 #include "SingleTrace.h"
@@ -15,6 +16,7 @@
 #include "NormCalculator.h"
 #include "ScriptGenerator.h"
 #include "StateType.h"
+#include "EigenEnergyLargeN.h"
 
 using namespace std;
 
@@ -278,13 +280,15 @@ void OutputStateStructure()
 
 void CalculateAllEigenvalues(int bits)
 {
-	H0Hamiltonian h0;
-	Eigen::MatrixXcd mat = h0.ToMatrixN(bits, Boson, 0.001);
-	Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat);
-	cout << mat.eigenvalues() << endl;
+	//H0Hamiltonian h0;
+	//Eigen::MatrixXcd mat = h0.ToMatrixN(bits, Boson, 0.001);
+	//Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat);
+	//cout << mat.eigenvalues() << endl;
+	EigenEnergyLargeN ee(bits);
+	ee.CalculateByEigen();
 }
 
-int main()
+int main(int argc, char* argv[])
 {
 	GenerateStates(true);
 	//TestTraceState();
@@ -301,6 +305,19 @@ int main()
 	//OutputStateStructure();
 	//GenerateAllHamDataFile();
 	//GenerateNormDataFile(8, 10, Boson);
-	CalculateAllEigenvalues(3);
+	string cmd = "";
+	if (argc > 1) cmd = argv[1];
+
+	if (cmd == "-e")
+	{
+		if (argc < 3)
+		{
+			cout << "need one more integer type  parameter. ";
+			return -1;
+		}
+	
+		CalculateAllEigenvalues(atoi(argv[2]));
+	}
+
 	return 0;
 }
