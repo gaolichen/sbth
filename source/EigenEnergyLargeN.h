@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 #include "BitUtility.h"
 #include "EigenCommon.h"
 
@@ -27,6 +28,16 @@ private:
 	int M;
 	int s;
 	vector<i64> masks;
+    vector<vector<double> > singleTraceEnergies;
+    
+    // states build by bosonic single trace states.
+    // statesByBoson[i, j]: eigenenergies built out of j number of i-bit single trace bosonic state.
+    map<pair<int, int>, vector<double> > statesByBoson;
+
+    // states build by fermionic single trace states.
+    // statesByFermion[i, j]: eigenenergies built out of j number of i-bit single trace fermionic state.
+    map<pair<int, int>, vector<double> > statesByFermion;
+
 	static const double DefaultInvN = EPS;
 
 	// list of eigen energies: for each element, the first component is the value of energy, 
@@ -43,6 +54,30 @@ private:
 
 	void Partition(int n, int k, i64 mask);
 
+    // this function calculates all energies of single trace with bit number <= M and stores 
+    // results in singleTraceEnergies.
+    void CalcAllSingleTraceEnergies();
+
+    // find all bosonic multi-trace energies built out of n number of b-bit single trace states.
+    // store results in statesByBoson.
+    void BuildBosonicMultiTraceEnergies(int b, int n);
+    
+    // the recursive function invoked by BuildBosonicMultiTraceEnergies.
+    // index: pick n b-bit single traces from collection {0, 1, ... index}
+    // energy: current value of energy.
+    // res: the vector to stotre results.
+    void BuildBosonicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res);
+
+    // find all fermionic multi-trace energies built out of n number of b-bit single trace states.
+    // store results in statesByFermion.
+    void BuildFermionicMultiTraceEnergies(int b, int n);
+
+    // the recursive function invoked by BuildFermionicMultiTraceEnergies.
+    // index: pick n b-bit single traces from collection {0, 1, ... index}
+    // energy: current value of energy.
+    // res: the vector to stotre results.
+    void BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res);
+
 public:
 	// constructor.
 	// bits: number of bits of the stringbit system, i.e, the M in the paper
@@ -58,9 +93,11 @@ public:
 	// is of the form  EEs=1M=5.txt and the one for eigen states is of the form
 	// ESs=1M=5.txt. 
 	// invN: the value of 1/N, should be very small
-	void CalculateByEigen(double invN = DefaultInvN);
+	void CalculateByEigen(double invN = DefaultInvN, bool calcEigenvector = true);
 
 	void Calculate();
+
+	void CalculateByDynamics();
 
 	//void LoadFromFile(string file);
 

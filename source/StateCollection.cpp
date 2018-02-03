@@ -32,6 +32,11 @@ void StateCollection::Init(int bits, vector<TraceState>& bosons, vector<TraceSta
 	}
 }
 
+void StateCollection::InitSingleTraceNumber(vector<snum>& singleTraceNumber)
+{
+    this->singleTraceNumber = singleTraceNumber;
+}
+
 StateId StateCollection::GetId(const TraceState& state) const
 {
 	map<TraceState, StateId>::const_iterator it;
@@ -52,6 +57,11 @@ const TraceState& StateCollection::GetState(const StateId& id) const
 int StateCollection::StateNumber(int bits) const
 {
 	return stateList[bits].size() / 2;
+}
+
+snum StateCollection::SingleTraceStateNumber(int bits) const
+{
+    return singleTraceNumber[bits];
 }
 
 const TraceState& StateCollection::GetBosonState(int bits, int index) const

@@ -2,6 +2,7 @@
 #include "EigenEnergyLargeN.h"
 #include "Hamiltonian.h"
 #include "BitUtility.h"
+#include "StateCollection.h"
 #include <math.h>
 #include <fstream>
 #include <iomanip>
@@ -80,7 +81,125 @@ void EigenEnergyLargeN::Calculate()
 	}
 }
 
-void EigenEnergyLargeN::CalculateByEigen(double invN)
+void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
+{
+    for (int bit = 1; bit <= M; bit++)
+    {
+        vector<double> v;
+        v.reserve(StateCollection::Inst()->SingleTraceStateNumber(bit));
+        double e0 = -4 / tan(PI/(2 * bit));
+
+	    for (int i = 0; i < (1<<bit); i+=2)
+	    {
+		    double deltE = 0.0;
+		    int modes = 0;
+		    for (int j = 1; (1<<j) <= i; j++)
+		    {
+			    if ((i & (1<<j)) == 0) continue;
+			    deltE += 8 * sin(j * PI/bit);
+			    modes += j;
+		    }
+
+		    if ((bit % 2 == 1 && modes % bit == 0) || (bit % 2 ==0 && modes % bit == bit / 2))
+		    {
+			    v.push_back(e0 + deltE);
+		    }
+	    }
+
+        //cout << "bit = " << bit << ", state number = " << v.size() << ", expected = " << StateCollection::Inst()->SingleTraceStateNumber(bit) << endl;
+
+        singleTraceEnergies.push_back(v);
+    }
+}
+
+void EigenEnergyLargeN::BuildBosonicMultiTraceEnergies(int b, int n)
+{
+    vector<double>& res = statesByBoson[make_pair(b, n)];
+    int size = StateCollection::Inst()->SingleTraceStateNumber(b);
+    res.reserve(BinomialCoefficient(size + n - 1, n));
+    BuildBosonicMultiTraceEnergiesRec(b, singleTraceEnergies[b - 1].size() - 1, n, .0, res);
+}
+
+void EigenEnergyLargeN::BuildBosonicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res)
+{
+    if (n == 0)
+    {
+        res.push_back(Chop(energy));
+        return;
+    }
+
+    if (index == 0)
+    {
+        res.push_back(Chop(energy + singleTraceEnergies[b - 1][0] * n));
+        return;
+    }
+
+    for (int i = 0; i <= n; i++)
+    {
+        BuildBosonicMultiTraceEnergiesRec(b, index - 1, n - i, energy, res);
+        energy += singleTraceEnergies[b - 1][index];
+    }
+}
+
+void EigenEnergyLargeN::BuildFermionicMultiTraceEnergies(int b, int n)
+{
+    vector<double>& res = statesByFermion[make_pair(b, n)];
+    int size = StateCollection::Inst()->SingleTraceStateNumber(b);
+    res.reserve(BinomialCoefficient(size, n));
+    BuildFermionicMultiTraceEnergiesRec(b, singleTraceEnergies[b - 1].size() - 1, n, .0, res);
+}
+
+void EigenEnergyLargeN::BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res)
+{
+    if (n == 0)
+    {
+        res.push_back(Chop(energy));
+        return;
+    }
+
+    if (index + 1 < n)
+    {
+        return;
+    }
+    else if (index + 1 == n)
+    {
+        for (int i = 0; i <= index; i++) 
+        {
+            energy += singleTraceEnergies[b - 1][i];
+        }
+        res.push_back(Chop(energy));
+        return;
+    }
+
+    BuildFermionicMultiTraceEnergiesRec(b, index - 1, n - 1, energy + singleTraceEnergies[b - 1][index], res);
+    BuildFermionicMultiTraceEnergiesRec(b, index - 1, n, energy, res);
+}
+
+void EigenEnergyLargeN::CalculateByDynamics()
+{
+    // first calculate all single trace state energies.
+    CalcAllSingleTraceEnergies();
+
+    for (int bit = 1; bit <= M; bit++)
+    {
+        for (int i = 2; i * bit <= M; i++)
+        {
+            cout << "(" << bit << ", " << i << ") single trace states #:";
+            cout << StateCollection::Inst()->SingleTraceStateNumber(bit);
+
+            BuildBosonicMultiTraceEnergies(bit, i);
+            cout << " statesByBoson: " << statesByBoson[make_pair(bit, i)];
+            if (i <= StateCollection::Inst()->SingleTraceStateNumber(bit))
+            {
+                BuildFermionicMultiTraceEnergies(bit, i);
+                cout << ", statesByFermion: " << statesByFermion[make_pair(bit, i)];
+            }
+            cout << endl;
+        }
+    }
+}
+
+void EigenEnergyLargeN::CalculateByEigen(double invN, bool calcEigenvector)
 {
 	if (s != 1)
 	{
@@ -102,10 +221,8 @@ void EigenEnergyLargeN::CalculateByEigen(double invN)
 	// calculate eigenvalues and eigenvectors.
 	H0Hamiltonian h0;
 	Eigen::MatrixXcd mat = h0.ToMatrixN(M, Boson, invN);
-	Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat);
-
+	Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat, calcEigenvector);
 	Eigen::VectorXcd values = solver.eigenvalues();
-	Eigen::MatrixXcd vectors = solver.eigenvectors();
 
 	// sort them by eigenvalues.
 	vector<int> pos(values.size(), 0);
@@ -124,6 +241,12 @@ void EigenEnergyLargeN::CalculateByEigen(double invN)
 
 	ofs1.close();
 
+	if (calcEigenvector == false)
+	{
+		return;
+	}
+
+	Eigen::MatrixXcd vectors = solver.eigenvectors();
 	ofstream ofs2(file2.c_str());
 
 	for (int i = 0; i < vectors.cols(); i++)

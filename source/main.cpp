@@ -285,7 +285,15 @@ void CalculateAllEigenvalues(int bits)
 	//Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat);
 	//cout << mat.eigenvalues() << endl;
 	EigenEnergyLargeN ee(bits);
-	ee.CalculateByEigen();
+	if (bits > 2)
+	{
+		//ee.CalculateByEigen(0.0, false);
+        ee.CalculateByDynamics();
+	}
+	else
+	{
+		ee.CalculateByEigen();
+	}
 }
 
 int main(int argc, char* argv[])

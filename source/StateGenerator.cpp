@@ -336,6 +336,8 @@ void StateGenerator::InitStateCollection(StateCollection* collection)
 	{
 		collection->Init(i, bosons[i][i], fermions[i][i]);
 	}
+
+    collection->InitSingleTraceNumber(singleTraceNumbers);
 }
 
 void StateGenerator::BuildSingleOperatorStates(int remBit, int currBits, vector<int>& res)
