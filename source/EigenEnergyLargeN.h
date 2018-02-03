@@ -31,12 +31,12 @@ private:
     vector<vector<double> > singleTraceEnergies;
     
     // states build by bosonic single trace states.
-    // statesByBoson[i, j]: eigenenergies built out of j number of i-bit single trace bosonic state.
-    map<pair<int, int>, vector<double> > statesByBoson;
+    // statesByBoson[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit single trace bosonic state.
+    vector<vector<vector<double> > > statesByBoson;
 
     // states build by fermionic single trace states.
-    // statesByFermion[i, j]: eigenenergies built out of j number of i-bit single trace fermionic state.
-    map<pair<int, int>, vector<double> > statesByFermion;
+    // statesByFermion[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit single trace fermionic state.
+    vector<vector<vector<double> > > statesByFermion;
 
 	static const double DefaultInvN = EPS;
 

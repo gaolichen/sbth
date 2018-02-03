@@ -114,7 +114,7 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 
 void EigenEnergyLargeN::BuildBosonicMultiTraceEnergies(int b, int n)
 {
-    vector<double>& res = statesByBoson[make_pair(b, n)];
+    vector<double>& res = statesByBoson[n - 1][b - 1];
     int size = StateCollection::Inst()->SingleTraceStateNumber(b);
     res.reserve(BinomialCoefficient(size + n - 1, n));
     BuildBosonicMultiTraceEnergiesRec(b, singleTraceEnergies[b - 1].size() - 1, n, .0, res);
@@ -143,7 +143,7 @@ void EigenEnergyLargeN::BuildBosonicMultiTraceEnergiesRec(int b, int index, int 
 
 void EigenEnergyLargeN::BuildFermionicMultiTraceEnergies(int b, int n)
 {
-    vector<double>& res = statesByFermion[make_pair(b, n)];
+    vector<double>& res = statesByFermion[n - 1][b - 1];
     int size = StateCollection::Inst()->SingleTraceStateNumber(b);
     res.reserve(BinomialCoefficient(size, n));
     BuildFermionicMultiTraceEnergiesRec(b, singleTraceEnergies[b - 1].size() - 1, n, .0, res);
@@ -180,19 +180,26 @@ void EigenEnergyLargeN::CalculateByDynamics()
     // first calculate all single trace state energies.
     CalcAllSingleTraceEnergies();
 
-    for (int bit = 1; bit <= M; bit++)
+    statesByBoson.reserve(M);
+    statesByFermion.reserve(M);
+    statesByBoson.push_back(vector<vector<double> >());
+    statesByFermion.push_back(vector<vector<double> >());
+
+    for (int i = 2; i <= M; i++)
     {
-        for (int i = 2; i * bit <= M; i++)
+        statesByBoson.push_back(vector<vector<double> >(M/i, vector<double>()));
+        statesByFermion.push_back(vector<vector<double> >(M/i, vector<double>()));
+        for (int bit = 1; bit * i <= M; bit++)
         {
-            cout << "(" << bit << ", " << i << ") single trace states #:";
+            cout << "(" << i << ", " << bit << ") single trace states #:";
             cout << StateCollection::Inst()->SingleTraceStateNumber(bit);
 
             BuildBosonicMultiTraceEnergies(bit, i);
-            cout << " statesByBoson: " << statesByBoson[make_pair(bit, i)];
+            cout << " statesByBoson: " << statesByBoson[i - 1][bit - 1];
             if (i <= StateCollection::Inst()->SingleTraceStateNumber(bit))
             {
                 BuildFermionicMultiTraceEnergies(bit, i);
-                cout << ", statesByFermion: " << statesByFermion[make_pair(bit, i)];
+                cout << ", statesByFermion: " << statesByFermion[i - 1][bit - 1];
             }
             cout << endl;
         }
