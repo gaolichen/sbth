@@ -177,12 +177,18 @@ void EigenEnergyLargeN::BuildFermionicMultiTraceEnergiesRec(int b, int index, in
 
 void EigenEnergyLargeN::CalculateByDynamics()
 {
+        
     // first calculate all single trace state energies.
     CalcAllSingleTraceEnergies();
 
+    // initialize statesByBoson and statesByFermion
     statesByBoson.reserve(M);
     statesByFermion.reserve(M);
-    statesByBoson.push_back(vector<vector<double> >());
+
+    // the first element of statesByBoson is simply singleTraceEnergies
+    statesByBoson.push_back(singleTraceEnergies);
+    // for statesByFermion, we let its first element be empty, because we do
+    // not need it in the following calculation.
     statesByFermion.push_back(vector<vector<double> >());
 
     for (int i = 2; i <= M; i++)
@@ -202,6 +208,52 @@ void EigenEnergyLargeN::CalculateByDynamics()
                 cout << ", statesByFermion: " << statesByFermion[i - 1][bit - 1];
             }
             cout << endl;
+        }
+    }
+
+    // build statesByBoth
+    BuildStatesByBoth();
+}
+
+void EigenEnergyLargeN::BuildStatesByBoth()
+{
+    statesByBoth.reserve(M);
+    statesByBoth.push_back(vector<vector<double> >());
+    
+    for (int i = 2; i <= M; i++)
+    {
+        statesByBoth.push_back(statesByBoson[i - 1]);
+        for (int bit = 1; bit * i <= M; bit++)
+        {
+            vector<double>& v = statesByBoth[i - 1][bit - 1];
+            for (int k = 2; k < i; k += 2)
+            {
+                if (statesByFermion[k - 1][bit - 1].size() > 0)
+                {
+                    vector<double> toAdd;
+                    MergeEnergy(statesByFermion[k - 1][bit - 1], statesByBoson[i - k - 1][bit - 1], toAdd);
+                    v.insert(v.end(), toAdd.begin(), toAdd.end());
+                }
+            }
+
+            if (i % 2 == 0)
+            {
+                v.insert(v.end(), statesByFermion[i - 1][bit - 1].begin(), statesByFermion[i - 1][bit - 1].end());
+            }
+
+            cout << "(" << i << ", " << bit << "): " << statesByBoth[i - 1][bit - 1] << endl;
+        }
+    }
+}
+
+void EigenEnergyLargeN::MergeEnergy(vector<double>& a, vector<double>& b, vector<double>& res)
+{
+    res.reserve(a.size() * b.size());
+    for (int i = 0; i < a.size(); i++)
+    {
+        for (int j = 0; j < b.size(); j++)
+        {
+            res.push_back(Chop(a[i] + b[j]));
         }
     }
 }

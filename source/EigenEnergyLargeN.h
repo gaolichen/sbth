@@ -30,13 +30,16 @@ private:
 	vector<i64> masks;
     vector<vector<double> > singleTraceEnergies;
     
-    // states build by bosonic single trace states.
-    // statesByBoson[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit single trace bosonic state.
+    // states built by bosonic single trace states.
+    // statesByBoson[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit bosonic single trace state.
     vector<vector<vector<double> > > statesByBoson;
 
-    // states build by fermionic single trace states.
-    // statesByFermion[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit single trace fermionic state.
+    // states built by fermionic single trace states.
+    // statesByFermion[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit fermionic single trace state.
     vector<vector<vector<double> > > statesByFermion;
+
+    // statesByBoth[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit single trace state.
+    vector<vector<vector<double> > > statesByBoth;
 
 	static const double DefaultInvN = EPS;
 
@@ -77,6 +80,13 @@ private:
     // energy: current value of energy.
     // res: the vector to stotre results.
     void BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res);
+    
+    // build statesByBoth
+    void BuildStatesByBoth();
+
+    // merge two lists of eigenenergies to one.
+    // res will be of size size(a)*size(b), and each element is of the form a[i] + b[j].
+    static void MergeEnergy(vector<double>& a, vector<double>& b, vector<double>& res);
 
 public:
 	// constructor.
