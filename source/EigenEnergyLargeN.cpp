@@ -213,6 +213,55 @@ void EigenEnergyLargeN::CalculateByDynamics()
 
     // build statesByBoth
     BuildStatesByBoth();
+
+    BuildAllStates();
+}
+
+void EigenEnergyLargeN::BuildAllStates()
+{
+    allStates.reserve(StateCollection::Inst()->StateNumber(M));
+    BuildAllStatesRec(M, M, .0, 0);
+    sort(allStates.begin(), allStates.end());
+    cout << "total states number: " << allStates.size() << endl;
+    //cout << "eigenenergies: " << allStates << endl;
+}
+
+void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, double energy, int deg)
+{
+    if (bitRemain == 0 || singleTraceBits == 1)
+    {
+        int n = (1 << (deg - 1));
+        if (bitRemain > 0) n = (1 << deg);
+        for (int i = 0; i < n; i++)        
+            allStates.push_back(energy);
+        return;
+    }
+
+    if (singleTraceBits > bitRemain)
+    {
+        BuildAllStatesRec(bitRemain, bitRemain, energy, deg);
+        return;
+    }
+
+    // skip this single trace
+    BuildAllStatesRec(bitRemain, singleTraceBits - 1, energy, deg);
+
+    // pick one single trace.
+    for (int i = 0; i < singleTraceEnergies[singleTraceBits - 1].size(); i++)
+    {
+        BuildAllStatesRec(bitRemain - singleTraceBits, singleTraceBits - 1, 
+            energy + singleTraceEnergies[singleTraceBits - 1][i], deg + 1);
+    }
+
+    // pick two of more.
+    for (int i = 2; i * singleTraceBits <= bitRemain; i++)
+    {
+        for (int j = 0; j < statesByBoth[i - 1][singleTraceBits - 1].size(); j++)
+        {
+            BuildAllStatesRec(bitRemain - singleTraceBits * i, singleTraceBits - 1, 
+                energy + statesByBoth[i - 1][singleTraceBits - 1][j], deg + 1);
+        }
+    }
 }
 
 void EigenEnergyLargeN::BuildStatesByBoth()

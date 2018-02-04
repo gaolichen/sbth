@@ -41,6 +41,9 @@ private:
     // statesByBoth[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit single trace state.
     vector<vector<vector<double> > > statesByBoth;
 
+    // all M-bit bosonic eigenenergies.
+    vector<double> allStates;
+
 	static const double DefaultInvN = EPS;
 
 	// list of eigen energies: for each element, the first component is the value of energy, 
@@ -83,6 +86,12 @@ private:
     
     // build statesByBoth
     void BuildStatesByBoth();
+    
+    // build allStates.
+    void BuildAllStates();
+
+    // The recursive function invoked by BuildAllStates().
+    void BuildAllStatesRec(int bitRemain, int singleTraceBits, double energy, int deg);
 
     // merge two lists of eigenenergies to one.
     // res will be of size size(a)*size(b), and each element is of the form a[i] + b[j].
