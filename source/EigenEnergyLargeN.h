@@ -7,6 +7,8 @@
 
 using namespace std;
 
+#define DefaultInvN EPS
+
 // struct provides comparision function for sorting eigenstates.
 struct EigenvalueLess
 {
@@ -46,8 +48,6 @@ private:
 
     // all M-bit bosonic eigenenergies.
     vector<double> allStates;
-
-	static const double DefaultInvN = EPS;
 
 	// list of eigen energies: for each element, the first component is the value of energy, 
 	// and the second component is the degeneracy of the enerties.

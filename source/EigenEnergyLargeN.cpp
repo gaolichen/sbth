@@ -3,8 +3,9 @@
 #include "Hamiltonian.h"
 #include "BitUtility.h"
 #include "StateCollection.h"
-#include <math.h>
+#include <cmath>
 #include <fstream>
+#include <cstdlib>
 #include <iomanip>
 using namespace std;
 
@@ -84,7 +85,7 @@ void EigenEnergyLargeN::Calculate()
 void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 {
     singleTraceEnergies.reserve(M + 1);
-    singleTraceEnergies.push_back(vector<double>());
+    singleTraceEnergies.push_back(vector<double>(1, 0.0));
 
     for (int bit = 1; bit <= M; bit++)
     {
@@ -188,9 +189,9 @@ void EigenEnergyLargeN::CalculateByDynamics()
     statesByBoson.reserve(M + 1);
     statesByFermion.reserve(M + 1);
 
-    // the zeroth elements are empty.
-    statesByBoson.push_back(vector<vector<double> >());
-    statesByFermion.push_back(vector<vector<double> >());
+    // the (0, i) elements are vacuum states.
+    statesByBoson.push_back(vector<vector<double> >(M + 1, vector<double>(1, 0.0)));
+    statesByFermion.push_back(vector<vector<double> >(M + 1, vector<double>(1, 0.0)));
 
     // the first element of statesByBoson is simply singleTraceEnergies
     statesByBoson.push_back(singleTraceEnergies);
@@ -279,11 +280,11 @@ void EigenEnergyLargeN::BuildStatesByBoth()
     
     for (int i = 2; i <= M; i++)
     {
-        statesByBoth.push_back(statesByBoson[i]);
+        statesByBoth.push_back(vector<vector<double> > (M/i + 1, vector<double>()));
         for (int bit = 1; bit * i <= M; bit++)
         {
             vector<double>& v = statesByBoth[i][bit];
-            for (int k = 2; k < i; k += 2)
+            for (int k = 0; k <= i; k += 2)
             {
                 if (statesByFermion[k][bit].size() > 0)
                 {
@@ -291,11 +292,6 @@ void EigenEnergyLargeN::BuildStatesByBoth()
                     MergeEnergy(statesByFermion[k][bit], statesByBoson[i - k][bit], toAdd);
                     v.insert(v.end(), toAdd.begin(), toAdd.end());
                 }
-            }
-
-            if (i % 2 == 0)
-            {
-                v.insert(v.end(), statesByFermion[i][bit].begin(), statesByFermion[i][bit].end());
             }
 
             cout << "(" << i << ", " << bit << "): " << statesByBoth[i][bit] << endl;
@@ -326,7 +322,7 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, bool calcEigenvector)
 	string file = "s=" + ToString(s) + "M=" + ToString(M);
 	if (abs(invN) > EPS)
 	{
-		file += "N=" + ToString((int)round(1/invN + .5));
+		file += "N=" + ToString((int)floor(1/invN + .5));
 	}
 	
 	// file1 to save eigenvalues. 
