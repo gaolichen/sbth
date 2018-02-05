@@ -284,13 +284,21 @@ void EigenEnergyLargeN::BuildStatesByBoth()
         for (int bit = 1; bit * i <= M; bit++)
         {
             vector<double>& v = statesByBoth[i][bit];
+			int size = 0;
+
+			// go through first round to calculate number of states.
             for (int k = 0; k <= i; k += 2)
+            {
+				size += statesByFermion[k][bit].size() * statesByBoson[i - k][bit].size();
+            }
+
+			v.reserve(size);
+			// second round to add states
+			for (int k = 0; k <= i; k += 2)
             {
                 if (statesByFermion[k][bit].size() > 0)
                 {
-                    vector<double> toAdd;
-                    MergeEnergy(statesByFermion[k][bit], statesByBoson[i - k][bit], toAdd);
-                    v.insert(v.end(), toAdd.begin(), toAdd.end());
+                    MergeEnergy(statesByFermion[k][bit], statesByBoson[i - k][bit], v);
                 }
             }
 
@@ -301,7 +309,6 @@ void EigenEnergyLargeN::BuildStatesByBoth()
 
 void EigenEnergyLargeN::MergeEnergy(vector<double>& a, vector<double>& b, vector<double>& res)
 {
-    res.reserve(a.size() * b.size());
     for (int i = 0; i < a.size(); i++)
     {
         for (int j = 0; j < b.size(); j++)
