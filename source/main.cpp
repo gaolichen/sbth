@@ -280,15 +280,12 @@ void OutputStateStructure()
 
 void CalculateAllEigenvalues(int bits)
 {
-	//H0Hamiltonian h0;
-	//Eigen::MatrixXcd mat = h0.ToMatrixN(bits, Boson, 0.001);
-	//Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat);
-	//cout << mat.eigenvalues() << endl;
+    cout << "Calculating large N energies for bits=" << bits << " ..." << endl;
 	EigenEnergyLargeN ee(bits);
 	if (bits > 2)
 	{
-		//ee.CalculateByEigen(0.0, false);
         ee.CalculateByDynamics();
+        ee.SaveEnergies(101);
 	}
 	else
 	{
@@ -298,11 +295,11 @@ void CalculateAllEigenvalues(int bits)
 
 int main(int argc, char* argv[])
 {
-	GenerateStates(true);
+	GenerateStates(false);
 	//TestTraceState();
 	//TestHamOperator();
-	TestHamiltonian("bbb");
-	TestHamiltonian("aab");
+	//TestHamiltonian("bbb");
+	//TestHamiltonian("aab");
 	//TestZeroHamiltonian();
 	//CalculateNorm(9, false);
 	//TestNormCalculator();
@@ -313,6 +310,9 @@ int main(int argc, char* argv[])
 	//OutputStateStructure();
 	//GenerateAllHamDataFile();
 	//GenerateNormDataFile(8, 10, Boson);
+
+    Stopwatch watch;
+	watch.Start();
 	string cmd = "";
 	if (argc > 1) cmd = argv[1];
 
@@ -326,6 +326,7 @@ int main(int argc, char* argv[])
 	
 		CalculateAllEigenvalues(atoi(argv[2]));
 	}
-
+    
+    cout << "Time: " << watch.Stop() << " seconds." << endl;
 	return 0;
 }
