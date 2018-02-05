@@ -83,6 +83,9 @@ void EigenEnergyLargeN::Calculate()
 
 void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 {
+    singleTraceEnergies.reserve(M + 1);
+    singleTraceEnergies.push_back(vector<double>());
+
     for (int bit = 1; bit <= M; bit++)
     {
         vector<double> v;
@@ -114,10 +117,10 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 
 void EigenEnergyLargeN::BuildBosonicMultiTraceEnergies(int b, int n)
 {
-    vector<double>& res = statesByBoson[n - 1][b - 1];
+    vector<double>& res = statesByBoson[n][b];
     int size = StateCollection::Inst()->SingleTraceStateNumber(b);
     res.reserve(BinomialCoefficient(size + n - 1, n));
-    BuildBosonicMultiTraceEnergiesRec(b, singleTraceEnergies[b - 1].size() - 1, n, .0, res);
+    BuildBosonicMultiTraceEnergiesRec(b, singleTraceEnergies[b].size() - 1, n, .0, res);
 }
 
 void EigenEnergyLargeN::BuildBosonicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res)
@@ -130,23 +133,23 @@ void EigenEnergyLargeN::BuildBosonicMultiTraceEnergiesRec(int b, int index, int 
 
     if (index == 0)
     {
-        res.push_back(Chop(energy + singleTraceEnergies[b - 1][0] * n));
+        res.push_back(Chop(energy + singleTraceEnergies[b][0] * n));
         return;
     }
 
     for (int i = 0; i <= n; i++)
     {
         BuildBosonicMultiTraceEnergiesRec(b, index - 1, n - i, energy, res);
-        energy += singleTraceEnergies[b - 1][index];
+        energy += singleTraceEnergies[b][index];
     }
 }
 
 void EigenEnergyLargeN::BuildFermionicMultiTraceEnergies(int b, int n)
 {
-    vector<double>& res = statesByFermion[n - 1][b - 1];
+    vector<double>& res = statesByFermion[n][b];
     int size = StateCollection::Inst()->SingleTraceStateNumber(b);
     res.reserve(BinomialCoefficient(size, n));
-    BuildFermionicMultiTraceEnergiesRec(b, singleTraceEnergies[b - 1].size() - 1, n, .0, res);
+    BuildFermionicMultiTraceEnergiesRec(b, singleTraceEnergies[b].size() - 1, n, .0, res);
 }
 
 void EigenEnergyLargeN::BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res)
@@ -165,13 +168,13 @@ void EigenEnergyLargeN::BuildFermionicMultiTraceEnergiesRec(int b, int index, in
     {
         for (int i = 0; i <= index; i++) 
         {
-            energy += singleTraceEnergies[b - 1][i];
+            energy += singleTraceEnergies[b][i];
         }
         res.push_back(Chop(energy));
         return;
     }
 
-    BuildFermionicMultiTraceEnergiesRec(b, index - 1, n - 1, energy + singleTraceEnergies[b - 1][index], res);
+    BuildFermionicMultiTraceEnergiesRec(b, index - 1, n - 1, energy + singleTraceEnergies[b][index], res);
     BuildFermionicMultiTraceEnergiesRec(b, index - 1, n, energy, res);
 }
 
@@ -182,8 +185,12 @@ void EigenEnergyLargeN::CalculateByDynamics()
     CalcAllSingleTraceEnergies();
 
     // initialize statesByBoson and statesByFermion
-    statesByBoson.reserve(M);
-    statesByFermion.reserve(M);
+    statesByBoson.reserve(M + 1);
+    statesByFermion.reserve(M + 1);
+
+    // the zeroth elements are empty.
+    statesByBoson.push_back(vector<vector<double> >());
+    statesByFermion.push_back(vector<vector<double> >());
 
     // the first element of statesByBoson is simply singleTraceEnergies
     statesByBoson.push_back(singleTraceEnergies);
@@ -193,19 +200,19 @@ void EigenEnergyLargeN::CalculateByDynamics()
 
     for (int i = 2; i <= M; i++)
     {
-        statesByBoson.push_back(vector<vector<double> >(M/i, vector<double>()));
-        statesByFermion.push_back(vector<vector<double> >(M/i, vector<double>()));
+        statesByBoson.push_back(vector<vector<double> >(M/i + 1, vector<double>()));
+        statesByFermion.push_back(vector<vector<double> >(M/i + 1, vector<double>()));
         for (int bit = 1; bit * i <= M; bit++)
         {
             cout << "(" << i << ", " << bit << ") single trace states #:";
             cout << StateCollection::Inst()->SingleTraceStateNumber(bit);
 
             BuildBosonicMultiTraceEnergies(bit, i);
-            cout << " statesByBoson: " << statesByBoson[i - 1][bit - 1];
+            cout << " statesByBoson: " << statesByBoson[i][bit];
             if (i <= StateCollection::Inst()->SingleTraceStateNumber(bit))
             {
                 BuildFermionicMultiTraceEnergies(bit, i);
-                cout << ", statesByFermion: " << statesByFermion[i - 1][bit - 1];
+                cout << ", statesByFermion: " << statesByFermion[i][bit];
             }
             cout << endl;
         }
@@ -247,50 +254,51 @@ void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, do
     BuildAllStatesRec(bitRemain, singleTraceBits - 1, energy, deg);
 
     // pick one single trace.
-    for (int i = 0; i < singleTraceEnergies[singleTraceBits - 1].size(); i++)
+    for (int i = 0; i < singleTraceEnergies[singleTraceBits].size(); i++)
     {
         BuildAllStatesRec(bitRemain - singleTraceBits, singleTraceBits - 1, 
-            energy + singleTraceEnergies[singleTraceBits - 1][i], deg + 1);
+            energy + singleTraceEnergies[singleTraceBits][i], deg + 1);
     }
 
     // pick two of more.
     for (int i = 2; i * singleTraceBits <= bitRemain; i++)
     {
-        for (int j = 0; j < statesByBoth[i - 1][singleTraceBits - 1].size(); j++)
+        for (int j = 0; j < statesByBoth[i][singleTraceBits].size(); j++)
         {
             BuildAllStatesRec(bitRemain - singleTraceBits * i, singleTraceBits - 1, 
-                energy + statesByBoth[i - 1][singleTraceBits - 1][j], deg + 1);
+                energy + statesByBoth[i][singleTraceBits][j], deg + 1);
         }
     }
 }
 
 void EigenEnergyLargeN::BuildStatesByBoth()
 {
-    statesByBoth.reserve(M);
+    statesByBoth.reserve(M + 1);
+    statesByBoth.push_back(vector<vector<double> >());
     statesByBoth.push_back(vector<vector<double> >());
     
     for (int i = 2; i <= M; i++)
     {
-        statesByBoth.push_back(statesByBoson[i - 1]);
+        statesByBoth.push_back(statesByBoson[i]);
         for (int bit = 1; bit * i <= M; bit++)
         {
-            vector<double>& v = statesByBoth[i - 1][bit - 1];
+            vector<double>& v = statesByBoth[i][bit];
             for (int k = 2; k < i; k += 2)
             {
-                if (statesByFermion[k - 1][bit - 1].size() > 0)
+                if (statesByFermion[k][bit].size() > 0)
                 {
                     vector<double> toAdd;
-                    MergeEnergy(statesByFermion[k - 1][bit - 1], statesByBoson[i - k - 1][bit - 1], toAdd);
+                    MergeEnergy(statesByFermion[k][bit], statesByBoson[i - k][bit], toAdd);
                     v.insert(v.end(), toAdd.begin(), toAdd.end());
                 }
             }
 
             if (i % 2 == 0)
             {
-                v.insert(v.end(), statesByFermion[i - 1][bit - 1].begin(), statesByFermion[i - 1][bit - 1].end());
+                v.insert(v.end(), statesByFermion[i][bit].begin(), statesByFermion[i][bit].end());
             }
 
-            cout << "(" << i << ", " << bit << "): " << statesByBoth[i - 1][bit - 1] << endl;
+            cout << "(" << i << ", " << bit << "): " << statesByBoth[i][bit] << endl;
         }
     }
 }

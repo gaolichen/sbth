@@ -28,17 +28,20 @@ private:
 	int M;
 	int s;
 	vector<i64> masks;
+
+    // single trace eigen energies.
+    // singleTraceEnergies[b][i]: the i-th eigenenergy of b-bit single trace eigenstate.
     vector<vector<double> > singleTraceEnergies;
     
     // states built by bosonic single trace states.
-    // statesByBoson[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit bosonic single trace state.
+    // statesByBoson[k, b]: eigenenergies built out of k number of b-bit bosonic single trace state.
     vector<vector<vector<double> > > statesByBoson;
 
     // states built by fermionic single trace states.
-    // statesByFermion[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit fermionic single trace state.
+    // statesByFermion[k, b]: eigenenergies built out of k number of b-bit fermionic single trace state.
     vector<vector<vector<double> > > statesByFermion;
 
-    // statesByBoth[k, b]: eigenenergies built out of (k+1) number of (b+1)-bit single trace state.
+    // statesByBoth[k, b]: eigenenergies built out of k number of b-bit single trace state.
     vector<vector<vector<double> > > statesByBoth;
 
     // all M-bit bosonic eigenenergies.
