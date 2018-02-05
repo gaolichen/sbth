@@ -242,7 +242,7 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 		return;
 	}
 
-	string file = "s=" + ToString(s) + "M=" + ToString(M);
+	string file = "EEs=" + ToString(s) + "M=" + ToString(M);
 	if (buckets > 0) file += "g.txt";
 	else file += ".txt";
 
