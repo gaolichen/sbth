@@ -83,7 +83,7 @@ void TestTraceState()
 void GenerateStates(bool output)
 {
 	StateGenerator generator;
-	for (int i = 1; i <= StateGenerator::MAX_BIT_TO_COUNT; i++)
+	for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
 	{
 		if (output)
 		{
@@ -97,17 +97,15 @@ void GenerateStates(bool output)
     StateCounter* inst = StateCounter::Inst();
 
     //cout << "statecounter" << endl;
-    for (int i = 2; i <= StateGenerator::MAX_BIT_TO_COUNT; i+=2)
+    for (int i = 2; i <= StateCounter::MAX_BIT_TO_COUNT; i+=2)
     {
         //cout << i << ": " << inst->NoHalfMode(i) << endl;
     }
 
-    generator.InitAverageEnergy();
-
     cout << "average energy of each bit:" << endl;    
-    for (int i = 1; i <= StateGenerator::MAX_BIT_TO_COUNT; i++)
+    for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
     {
-        cout << i << ": " << generator.AverageEnergy(i) << endl;
+        cout << i << ": " << inst->AverageEnergy(i) << endl;
     }
 }
 

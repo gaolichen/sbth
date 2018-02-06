@@ -11,43 +11,13 @@ using namespace std;
 
 StateGenerator::StateGenerator()
 {
-	vector<vector<snum> > numbers = vector<vector<snum> >(MAX_BIT_TO_COUNT + 1, vector<snum>(2, (snum)(-1)));
-	stateNumbers.resize(MAX_BIT_TO_COUNT + 1, numbers);
-    oddOnlyStateNumbers.resize(MAX_BIT_TO_COUNT / 2 + 1, vector<snum>(MAX_BIT_TO_COUNT + 1, (snum)(-1)));
-    evenTraceNumbers.resize(MAX_BIT_TO_COUNT + 1, vector<snum>(MAX_BIT_TO_COUNT + 1, (snum)(-1)));
+    counter = StateCounter::Inst();
 	myFlags = new bool[1 << MAX_BIT_TO_GENERATE];
-	InitSingleTraceNumber();
 }
 
 StateGenerator::~StateGenerator()
 {
 	delete[] myFlags;
-}
-
-void StateGenerator::InitSingleTraceNumber()
-{
-	singleTraceNumbers.resize(MAX_BIT_TO_COUNT + 1);
-	for (int m = 1; m <= MAX_BIT_TO_COUNT; m++)
-	{
-#ifdef TEST_STATENUMBER
-		singleTraceNumbers[m] = ((((i64)1) << (m - 1)) + m - 1) / m;
-#else
-		int p = m;
-		while (p % 2 == 0)
-		{
-			p /= 2;
-		}
-
-		snum res = 0;
-		for (int i = 1; i <= p; i++)
-		{
-			int toShift = m / p * Gcd(i, p);
-			res += ((i64)1 << toShift);
-		}
-
-		singleTraceNumbers[m] = res / (2 * m);
-#endif
-	}
 }
 
 void StateGenerator::GeneratSingleStates()
@@ -96,164 +66,17 @@ void StateGenerator::FindSingleStates(int bit)
 
 snum StateGenerator::SingleStateNumber(int n)
 {
-	return singleTraceNumbers[n];
+    return counter->SingleTrace(n);
 }
 
 snum StateGenerator::BosonNumber(int n)
 {
-	return StateNumbers(n, n, 0);
+    return counter->MultiTrace(n);
 }
 
 snum StateGenerator::FermionNumber(int n)
 {
-	return StateNumbers(n, n, 1);
-}
-
-void StateGenerator::InitAverageEnergy()
-{
-    StateCounter* inst = StateCounter::Inst();
-    aveESingle.resize(MAX_BIT_TO_COUNT / 2 + 1, 0.0);
-    aveE.resize(MAX_BIT_TO_COUNT + 1, vector<long double>(MAX_BIT_TO_COUNT + 1, (long double)-1.0));
-
-    for (int i = 2; i <= MAX_BIT_TO_COUNT; i += 2)
-    {
-        aveESingle[i / 2] = 4 - 8 * inst->NoHalfMode(i) / (long double)SingleStateNumber(i);
-    }
-}
-
-double StateGenerator::AverageEnergy(int bit)
-{
-    return AverageEnergy(bit, bit, 0) / BosonNumber(bit);
-}
-
-long double StateGenerator::AverageEnergy(int bit, int remain, int parity)
-{
-    if (remain == 0) return 0.0;
-    if (bit <= 1) return 0.0;
-
-    long double ret = aveE[bit][remain];
-	if (ret >= 0.0) return ret;
-	int a = remain / bit;
-
-	ret = 0.0;
-	for (int i = 0; i <= a; i++)
-    {
-		for (int j = 0; i + j <= a; j++)
-		{
-			snum n1 = BinomialCoefficient(singleTraceNumbers[bit], (i64)i);
-			snum n2 = BinomialCoefficient(singleTraceNumbers[bit] - 1 + j, (i64)j);
-            if (bit % 2 == 0)
-            {
-                ret += (long double)aveESingle[bit/2] * n1 * n2 * (i + j) * StateNumbers(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
-            }
-
-			ret += n1 * n2 * AverageEnergy(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
-		}
-    }
-
-    aveE[bit][remain] = ret;
-
-    return ret;
-}
-
-snum StateGenerator::EvenTraceNumber(int bit, int remain, int parity)
-{
-    if (remain == 0) return 0;
-    if (bit <= 1) return 0;
-
-    snum ret = evenTraceNumbers[bit][remain];
-	if (ret >= 0) return ret;
-	int a = remain / bit;
-
-	ret = 0;
-	for (int i = 0; i <= a; i++)
-    {
-		for (int j = 0; i + j <= a; j++)
-		{
-			snum n1 = BinomialCoefficient(singleTraceNumbers[bit], (i64)i);
-			snum n2 = BinomialCoefficient(singleTraceNumbers[bit] - 1 + j, (i64)j);
-            if (bit % 2 == 0)
-            {
-                ret += n1 * n2 * (i + j) * StateNumbers(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
-            }
-
-			ret += n1 * n2 * EvenTraceNumber(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
-		}
-    }
-
-    evenTraceNumbers[bit][remain] = ret;
-
-    return ret;
-}
-
-snum StateGenerator::OddOnlyStateNumbers(int bit, int remain, int parity)
-{
-	if (remain == 0)
-	{
-        if (parity == 0) return 1;
-        return 0;
-	}
-
-    if (bit == 1)
-	{
-		return 1;
-	}
-
-    if (bit < 1)
-    {
-        cout << "OddOnlyStateNumbers: should not reach here..." << endl;
-        return -1;
-    }
-
-	snum ret = oddOnlyStateNumbers[bit / 2][remain];
-	if (ret >= 0) return ret;
-	int a = remain / bit;
-
-	ret = 0;
-	for (int i = 0; i <= a; i++)
-    {
-		for (int j = 0; i + j <= a; j++)
-		{
-			snum n1 = BinomialCoefficient(singleTraceNumbers[bit], (i64)i);
-			snum n2 = BinomialCoefficient(singleTraceNumbers[bit] - 1 + j, (i64)j);
-			ret += n1 * n2 * OddOnlyStateNumbers(bit - 2, remain - (i+j) * bit, (parity + i) % 2);
-		}
-    }
-
-	oddOnlyStateNumbers[bit / 2][remain] = ret;
-	return ret;
-}
-
-snum StateGenerator::StateNumbers(int bit, int remain, int b)
-{
-	if (bit == 0)
-	{
-		if (remain == 0 && b == 0) return 1;
-		else return 0;
-	}
-	if (remain == 0)
-	{
-		if (b == 0) return 1;
-		return 0;
-	}
-
-	snum ret = stateNumbers[bit][remain][b];
-	if (ret >= 0) return ret;
-	int a = remain / bit;
-
-	ret = 0;
-	for (int i = 0; i <= a; i++)
-		for (int j = 0; i + j <= a; j++)
-		{
-			//int n1 = BinomialCoefficient(singleFermions[bit].size(), i);
-			//int n2 = BinomialCoefficient(singleBosons[bit].size() - 1 + j, j);
-			snum n1 = BinomialCoefficient(singleTraceNumbers[bit], (i64)i);
-			snum n2 = BinomialCoefficient(singleTraceNumbers[bit] - 1 + j, (i64)j);
-			ret += n1 * n2 * StateNumbers(bit - 1, remain - (i+j) * bit, (b+i)%2);
-		}
-		stateNumbers[bit][remain][b] = ret;
-
-	return ret;
+	return counter->MultiTrace(n);
 }
 
 void StateGenerator::GenerateAllStates()
@@ -455,13 +278,15 @@ void StateGenerator::InitStateCollection(StateCollection* collection)
 		collection->Init(i, bosons[i][i], fermions[i][i]);
 	}
 
-	vector<snum> stateNumber(MAX_BIT_TO_COUNT + 1, 0);
+	vector<snum> stateNumber(StateCounter::MAX_BIT_TO_COUNT + 1, 0);
+    vector<snum> singleStateNumber(StateCounter::MAX_BIT_TO_COUNT + 1, 0);
 	for (int i = 1; i < stateNumber.size(); i++)
 	{
 		stateNumber[i] = this->BosonNumber(i);
+        singleStateNumber[i] = this->SingleStateNumber(i);
 	}
 
-	collection->InitTraceNumber(singleTraceNumbers, stateNumber);
+	collection->InitTraceNumber(singleStateNumber, stateNumber);
 }
 
 void StateGenerator::BuildSingleOperatorStates(int remBit, int currBits, vector<int>& res)
