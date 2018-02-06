@@ -302,6 +302,7 @@ void CalculateAllEigenvalues(int bits)
         ee.CalculateByDynamics();
         ee.SaveEnergies(101);
         ee.SaveSingleEnergies(bits);
+        ee.CalculateThermo();
 	}
 	else
 	{

@@ -234,6 +234,45 @@ void EigenEnergyLargeN::BuildAllStates()
     //cout << "eigenenergies: " << allStates << endl;
 }
 
+void EigenEnergyLargeN::CalculateThermo()
+{
+    double minB = .0;
+    double maxB = 2.0;
+    double delta = (maxB - minB) / 100;
+
+    string file = "THs=" + ToString(s) + "M=" + ToString(M) + ".txt";
+	ofstream ofs(file.c_str());
+
+    //ofs << "T Z Energy Entropy" << endl;
+
+    for (double beta = minB; beta <= maxB + 1e-8; beta += delta)
+    {
+        double Z = .0;
+        double E = .0;
+
+        for (int i = allStates.size() - 1; i >= 0; i--)
+        {
+            double rho = exp(-beta * (allStates[i] + M)/sqrt(2));
+            Z += rho;
+            E += rho * allStates[i];
+        }
+
+        E /= Z;
+
+        double entropy = .0;
+
+        for (int i = allStates.size() - 1; i >= 0; i--)
+        {
+            double rho = exp(-beta * (allStates[i] + M)/sqrt(2)) / Z;
+            entropy -= rho * log(rho);
+        }
+
+        ofs << beta << " " << Z << " " << E << " " << entropy << endl;
+    }
+
+    ofs.close();
+}
+
 void EigenEnergyLargeN::SaveSingleEnergies(int bit)
 {
     if (s != 1)

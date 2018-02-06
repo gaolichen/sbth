@@ -121,6 +121,8 @@ public:
 
 	void CalculateByDynamics();
 
+    void CalculateThermo();
+
 	// save eigen energies to file
 	// buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
 	void SaveEnergies(int buckets = 0);
