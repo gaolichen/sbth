@@ -125,6 +125,8 @@ public:
 	// buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
 	void SaveEnergies(int buckets = 0);
 
+    void SaveSingleEnergies(int bit);
+
 	//void LoadFromFile(string file);
 
 	const vector<pair<double, int> > Energies() { return energies; }

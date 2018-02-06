@@ -58,7 +58,6 @@ const TraceState& StateCollection::GetState(const StateId& id) const
 snum StateCollection::StateNumber(int bits) const
 {
 	return multiTraceNumber[bits];
-	//return stateList[bits].size() / 2;
 }
 
 snum StateCollection::SingleTraceStateNumber(int bits) const

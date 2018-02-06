@@ -234,6 +234,25 @@ void EigenEnergyLargeN::BuildAllStates()
     //cout << "eigenenergies: " << allStates << endl;
 }
 
+void EigenEnergyLargeN::SaveSingleEnergies(int bit)
+{
+    if (s != 1)
+	{
+		cout << "Error: s = " << s << ". SaveEnergies only support for the s=1 case.";
+		return;
+	}
+
+    string file = "EEs=" + ToString(s) + "M=" + ToString(M) + "s.txt";
+
+	ofstream ofs(file.c_str());
+
+    for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
+	{
+		ofs << singleTraceEnergies[bit][i] << endl;
+	}
+    ofs.close();
+}
+
 void EigenEnergyLargeN::SaveEnergies(int buckets)
 {
 	if (s != 1)

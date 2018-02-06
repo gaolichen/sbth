@@ -17,6 +17,7 @@
 #include "ScriptGenerator.h"
 #include "StateType.h"
 #include "EigenEnergyLargeN.h"
+#include "StateCounter.h"
 
 using namespace std;
 
@@ -92,6 +93,22 @@ void GenerateStates(bool output)
 
 	generator.GenerateAllStates();
 	generator.InitStateCollection(StateCollection::Inst());
+
+    StateCounter* inst = StateCounter::Inst();
+
+    //cout << "statecounter" << endl;
+    for (int i = 2; i <= StateGenerator::MAX_BIT_TO_COUNT; i+=2)
+    {
+        //cout << i << ": " << inst->NoHalfMode(i) << endl;
+    }
+
+    generator.InitAverageEnergy();
+
+    cout << "average energy of each bit:" << endl;    
+    for (int i = 1; i <= StateGenerator::MAX_BIT_TO_COUNT; i++)
+    {
+        cout << i << ": " << generator.AverageEnergy(i) << endl;
+    }
 }
 
 void OutputHamiltonianMatrix(int bits)
@@ -286,6 +303,7 @@ void CalculateAllEigenvalues(int bits)
 	{
         ee.CalculateByDynamics();
         ee.SaveEnergies(101);
+        ee.SaveSingleEnergies(bits);
 	}
 	else
 	{
@@ -295,7 +313,7 @@ void CalculateAllEigenvalues(int bits)
 
 int main(int argc, char* argv[])
 {
-	GenerateStates(false);
+	GenerateStates(false);    
 	//TestTraceState();
 	//TestHamOperator();
 	//TestHamiltonian("bbb");

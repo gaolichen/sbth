@@ -15,7 +15,7 @@ private:
 	StateCounter(void);
 	static StateCounter* inst;
 
-	void StateCounter::InitNoHalfMode();
+	void InitNoHalfMode();
 public:
 	static StateCounter* Inst();
 

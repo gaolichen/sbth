@@ -1,6 +1,7 @@
 #pragma warning(disable:4018)
 #include "StateGenerator.h"
 #include "BitUtility.h"
+#include "StateCounter.h"
 #include <vector>
 #include <algorithm>
 #include <cstring>
@@ -12,6 +13,8 @@ StateGenerator::StateGenerator()
 {
 	vector<vector<snum> > numbers = vector<vector<snum> >(MAX_BIT_TO_COUNT + 1, vector<snum>(2, (snum)(-1)));
 	stateNumbers.resize(MAX_BIT_TO_COUNT + 1, numbers);
+    oddOnlyStateNumbers.resize(MAX_BIT_TO_COUNT / 2 + 1, vector<snum>(MAX_BIT_TO_COUNT + 1, (snum)(-1)));
+    evenTraceNumbers.resize(MAX_BIT_TO_COUNT + 1, vector<snum>(MAX_BIT_TO_COUNT + 1, (snum)(-1)));
 	myFlags = new bool[1 << MAX_BIT_TO_GENERATE];
 	InitSingleTraceNumber();
 }
@@ -104,6 +107,121 @@ snum StateGenerator::BosonNumber(int n)
 snum StateGenerator::FermionNumber(int n)
 {
 	return StateNumbers(n, n, 1);
+}
+
+void StateGenerator::InitAverageEnergy()
+{
+    StateCounter* inst = StateCounter::Inst();
+    aveESingle.resize(MAX_BIT_TO_COUNT / 2 + 1, 0.0);
+    aveE.resize(MAX_BIT_TO_COUNT + 1, vector<long double>(MAX_BIT_TO_COUNT + 1, (long double)-1.0));
+
+    for (int i = 2; i <= MAX_BIT_TO_COUNT; i += 2)
+    {
+        aveESingle[i / 2] = 4 - 8 * inst->NoHalfMode(i) / (long double)SingleStateNumber(i);
+    }
+}
+
+double StateGenerator::AverageEnergy(int bit)
+{
+    return AverageEnergy(bit, bit, 0) / BosonNumber(bit);
+}
+
+long double StateGenerator::AverageEnergy(int bit, int remain, int parity)
+{
+    if (remain == 0) return 0.0;
+    if (bit <= 1) return 0.0;
+
+    long double ret = aveE[bit][remain];
+	if (ret >= 0.0) return ret;
+	int a = remain / bit;
+
+	ret = 0.0;
+	for (int i = 0; i <= a; i++)
+    {
+		for (int j = 0; i + j <= a; j++)
+		{
+			snum n1 = BinomialCoefficient(singleTraceNumbers[bit], (i64)i);
+			snum n2 = BinomialCoefficient(singleTraceNumbers[bit] - 1 + j, (i64)j);
+            if (bit % 2 == 0)
+            {
+                ret += (long double)aveESingle[bit/2] * n1 * n2 * (i + j) * StateNumbers(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
+            }
+
+			ret += n1 * n2 * AverageEnergy(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
+		}
+    }
+
+    aveE[bit][remain] = ret;
+
+    return ret;
+}
+
+snum StateGenerator::EvenTraceNumber(int bit, int remain, int parity)
+{
+    if (remain == 0) return 0;
+    if (bit <= 1) return 0;
+
+    snum ret = evenTraceNumbers[bit][remain];
+	if (ret >= 0) return ret;
+	int a = remain / bit;
+
+	ret = 0;
+	for (int i = 0; i <= a; i++)
+    {
+		for (int j = 0; i + j <= a; j++)
+		{
+			snum n1 = BinomialCoefficient(singleTraceNumbers[bit], (i64)i);
+			snum n2 = BinomialCoefficient(singleTraceNumbers[bit] - 1 + j, (i64)j);
+            if (bit % 2 == 0)
+            {
+                ret += n1 * n2 * (i + j) * StateNumbers(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
+            }
+
+			ret += n1 * n2 * EvenTraceNumber(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
+		}
+    }
+
+    evenTraceNumbers[bit][remain] = ret;
+
+    return ret;
+}
+
+snum StateGenerator::OddOnlyStateNumbers(int bit, int remain, int parity)
+{
+	if (remain == 0)
+	{
+        if (parity == 0) return 1;
+        return 0;
+	}
+
+    if (bit == 1)
+	{
+		return 1;
+	}
+
+    if (bit < 1)
+    {
+        cout << "OddOnlyStateNumbers: should not reach here..." << endl;
+        return -1;
+    }
+
+	snum ret = oddOnlyStateNumbers[bit / 2][remain];
+	if (ret >= 0) return ret;
+	int a = remain / bit;
+
+	ret = 0;
+	for (int i = 0; i <= a; i++)
+    {
+		for (int j = 0; i + j <= a; j++)
+		{
+			snum n1 = BinomialCoefficient(singleTraceNumbers[bit], (i64)i);
+			snum n2 = BinomialCoefficient(singleTraceNumbers[bit] - 1 + j, (i64)j);
+			ret += n1 * n2 * OddOnlyStateNumbers(bit - 2, remain - (i+j) * bit, (parity + i) % 2);
+		}
+    }
+
+	oddOnlyStateNumbers[bit / 2][remain] = ret;
+	return ret;
 }
 
 snum StateGenerator::StateNumbers(int bit, int remain, int b)

@@ -14,7 +14,11 @@ private:
 	bool visited[30][30][2];
 
 	vector<vector<vector<snum> > > stateNumbers;
+    vector<vector<snum> > oddOnlyStateNumbers;
+    vector<vector<snum> > evenTraceNumbers;
 	vector<snum> singleTraceNumbers;
+    vector<double> aveESingle;
+    vector<vector<long double> > aveE;
 	vector<vector<SingleTrace> > singleFermions;
 	vector<vector<SingleTrace> > singleBosons;
 	vector<vector<vector<TraceState> > > fermions;
@@ -23,6 +27,9 @@ private:
 	void InitSingleTraceNumber();
 	void FindSingleStates(int n);
 	snum StateNumbers(int bit, int remain, int b);
+    snum OddOnlyStateNumbers(int bit, int remain, int parity);
+    snum EvenTraceNumber(int bit, int remain, int parity);
+    long double AverageEnergy(int bit, int remain, int parity);
 	void GeneratSingleStates();
 	static void DoPickFermion(vector<SingleTrace>& allstates, int index, int remain, vector<SingleTrace>& curr, vector<TraceState>& ret);
 	static void DoPickBoson(vector<SingleTrace>& allstates, int index, int remain, vector<SingleTrace>& curr, vector<TraceState>& ret);
@@ -39,6 +46,8 @@ public:
 	~StateGenerator();
 	
 	void GenerateAllStates();
+    void InitAverageEnergy();
+    double AverageEnergy(int bit);
 	snum BosonNumber(int n);
 	snum FermionNumber(int n);
 	snum SingleStateNumber(int n);
