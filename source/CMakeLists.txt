@@ -14,7 +14,8 @@ SET(STRBIT_LIB_SRCS
 	StateId.cpp
 	TraceState.cpp
 	ScriptGenerator.cpp
-	EigenEnergyLargeN.cpp)
+	EigenEnergyLargeN.cpp
+	StateCounter.cpp)
 
 IF(WIN32)
 	SET(STRBIT_LIB_SRCS 
@@ -35,6 +36,7 @@ IF(WIN32)
 		ScriptGenerator.h
 		StateType.h
 		EigenEnergyLargeN.h
+		StateCounter.h
 	)
 	
 	source_group("Header Files" FILES *.h)
