@@ -5,7 +5,6 @@
 using namespace std;
 
 // class implements all counting functions.
-// TODO: move all counting functions to the class.
 class StateCounter
 {
 private:
@@ -28,6 +27,7 @@ private:
     long double AverageEnergy(int bit, int remain, int parity);
 
     void InitSingleTraceNumber();
+    void InitAverageEnergy();
 public:
 
     const static int MAX_BIT_TO_COUNT = 62;
@@ -44,7 +44,6 @@ public:
 
     snum MultiTrace(int M);
 
-    void InitAverageEnergy();
     double AverageEnergy(int bit);
 
 	~StateCounter(void);

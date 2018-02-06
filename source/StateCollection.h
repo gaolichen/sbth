@@ -4,22 +4,22 @@
 #include "TraceState.h"
 #include "StateId.h"
 #include "StateType.h"
+#include "StateCounter.h"
+
 using namespace std;
 
 class StateCollection
 {
 private:
+    StateCounter* counter;
 	map<TraceState, StateId> state2Id;
 	vector<vector<TraceState> > stateList;
-    vector<snum> singleTraceNumber;
-	vector<snum> multiTraceNumber;
 
 	StateCollection();
 	static StateCollection* inst;
 public:
 	static StateCollection* Inst();
 	void Init(int bits, vector<TraceState>& bosons, vector<TraceState> fermions);
-    void InitTraceNumber(vector<snum>& singleTraceNumber, vector<snum>& multiTraceNumber);
 	StateId GetId(const TraceState& state) const;
 	const TraceState& GetState(const StateId& id) const;
 	snum StateNumber(int bits) const;

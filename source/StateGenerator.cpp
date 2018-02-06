@@ -277,16 +277,6 @@ void StateGenerator::InitStateCollection(StateCollection* collection)
 	{
 		collection->Init(i, bosons[i][i], fermions[i][i]);
 	}
-
-	vector<snum> stateNumber(StateCounter::MAX_BIT_TO_COUNT + 1, 0);
-    vector<snum> singleStateNumber(StateCounter::MAX_BIT_TO_COUNT + 1, 0);
-	for (int i = 1; i < stateNumber.size(); i++)
-	{
-		stateNumber[i] = this->BosonNumber(i);
-        singleStateNumber[i] = this->SingleStateNumber(i);
-	}
-
-	collection->InitTraceNumber(singleStateNumber, stateNumber);
 }
 
 void StateGenerator::BuildSingleOperatorStates(int remBit, int currBits, vector<int>& res)

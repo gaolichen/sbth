@@ -252,8 +252,8 @@ void ScriptGenerator::OutputHamToDataFile(int bits, Hamiltonian& ham, bool isCom
 {
 	string filePrefix = ToString(bits) + ham.FilePrefix();
 	
-        vector<vector<Coefficient> > rem, imm;
-        ham.Matrix(bits, type, rem, imm);
+    vector<vector<Coefficient> > rem, imm;
+    ham.Matrix(bits, type, rem, imm);
 	
 	SparseMatrixToDataFile(rem, filePrefix + "-re");
 

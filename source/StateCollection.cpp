@@ -15,6 +15,7 @@ StateCollection* StateCollection::Inst()
 	if (inst == NULL)
 	{
 		inst = new StateCollection();
+        inst->counter = StateCounter::Inst();
 	}
 
 	return inst;
@@ -30,12 +31,6 @@ void StateCollection::Init(int bits, vector<TraceState>& bosons, vector<TraceSta
 		this->state2Id[bosons[i]] = StateId(bits, 2 * i);
 		this->state2Id[fermions[i]] = StateId(bits, 2 * i + 1);
 	}
-}
-
-void StateCollection::InitTraceNumber(vector<snum>& singleTraceNumber, vector<snum>& multiTraceNumber)
-{
-    this->singleTraceNumber = singleTraceNumber;
-	this->multiTraceNumber = multiTraceNumber;
 }
 
 StateId StateCollection::GetId(const TraceState& state) const
@@ -57,12 +52,12 @@ const TraceState& StateCollection::GetState(const StateId& id) const
 
 snum StateCollection::StateNumber(int bits) const
 {
-	return multiTraceNumber[bits];
+	return counter->MultiTrace(bits);
 }
 
 snum StateCollection::SingleTraceStateNumber(int bits) const
 {
-    return singleTraceNumber[bits];
+    return counter->SingleTrace(bits);
 }
 
 const TraceState& StateCollection::GetBosonState(int bits, int index) const
