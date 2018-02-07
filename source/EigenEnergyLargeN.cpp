@@ -273,6 +273,41 @@ void EigenEnergyLargeN::CalculateThermo()
     ofs.close();
 }
 
+void EigenEnergyLargeN::CalcFluctuation(double beta)
+{
+    double maxT = 100.0;
+    double delta = maxT / 100;
+
+    string file = "FLs=" + ToString(s) + "M=" + ToString(M) + ".txt";
+	ofstream ofs(file.c_str());
+
+    double Z = .0;
+    for (int i = allStates.size() - 1; i >= 0; i--)
+    {
+        double rho = exp(-beta * (allStates[i] + M)/sqrt(2));
+        Z += rho;
+    }
+
+    ofs << beta << " " << Z << endl;
+    for (double t = 0.0; t <= maxT + 1e-8; t += delta)
+    {
+        double ZtReal = .0;
+        double ZtImag = .0;
+
+        for (int i = allStates.size() - 1; i >= 0; i--)
+        {
+            double rho = exp(-beta * (allStates[i] + M) / sqrt(2));
+            double angle = -(allStates[i] + M) / sqrt(2) * t;
+            ZtReal += rho * cos(angle);
+            ZtImag += rho * sin(angle);
+        }
+
+        ofs << t << " " << ZtReal << " " << ZtImag << endl;
+    }
+
+    ofs.close();
+}
+
 void EigenEnergyLargeN::SaveSingleEnergies(int bit)
 {
     if (s != 1)
