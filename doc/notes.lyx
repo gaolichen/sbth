@@ -1,0 +1,559 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\newcommand{\zero}[1] {\cancelto{0}{#1}}
+\newcommand{\tr}{\mathrm{Tr}\,}
+\newcommand{\ba}{\bar{a}}
+\newcommand{\bb}{\bar{b}}
+\newcommand{\normord}[1]{{:}\!\mathrel{#1}\!{:}}
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\bra}[1]{\left\langle #1\right|}
+\newcommand{\ketp}[1]{\left|#1\right\} }
+\newcommand{\brap}[1]{\left\{ #1\right|}
+\newcommand{\dprod}[2]{\left\langle #1|#2\right\rangle}
+\newcommand{\dprodp}[2]{\left\{ #1|#2\right\} }
+\newcommand{\mat}[1]{\mathbf{#1}}
+\newcommand{\g}{\mathrm{g}}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Notes
+\end_layout
+
+\begin_layout Section
+Eigenvalue density
+\end_layout
+
+\begin_layout Standard
+In this section, we discuss the eigenvalue density of the simplest stringbit
+ model, which has a Hamiltonian of the form 
+\begin_inset Formula 
+\begin{equation}
+H=\frac{2}{N}\tr\left[\left(\bar{a}^{2}-i\bar{b}^{2}\right)a^{2}-\left(\bar{b}^{2}-i\bar{a}^{2}\right)b^{2}+\left(\bar{a}\bar{b}+\bar{b}\bar{a}\right)ba+\left(\bar{a}\bar{b}-\bar{b}\bar{a}\right)ab\right].\label{eq:Ham}
+\end{equation}
+
+\end_inset
+
+The model can be solved in large 
+\begin_inset Formula $N$
+\end_inset
+
+ limit.
+ The eigenenergy of 
+\begin_inset Formula $M$
+\end_inset
+
+-bit single-trace state can be written as 
+\begin_inset Formula 
+\begin{equation}
+E\left(\left\{ \eta_{k}\right\} \right)=8\sum_{k=1}^{\left\lfloor M/2\right\rfloor }\eta_{k}\sin\frac{k\pi}{M}+\begin{cases}
+0 & \;\text{for odd }M\\
+4 & \;\text{for even }M
+\end{cases}\label{eq:SingleTraceE}
+\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\eta_{k}=-1,\,0,\,0,\,1,\;\text{for }k<M/2;\;\eta_{M/2}=-1,0.
+\]
+
+\end_inset
+
+ Then multi-trace states are products of single-trace states 
+\begin_inset Formula $\Phi_{1}\Phi_{2}\cdots\ket{0}$
+\end_inset
+
+ with energy 
+\begin_inset Formula $E=E_{1}+E_{2}+\cdots$
+\end_inset
+
+, where 
+\begin_inset Formula $E_{i}$
+\end_inset
+
+ is the eigenenergy of the single-trace eigenstate 
+\begin_inset Formula $\Phi_{i}\ket{0}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+With solution 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:SingleTraceE"
+
+\end_inset
+
+, we can generate all eigenvalues of 
+\begin_inset Formula $M$
+\end_inset
+
+-bit multi-trace eigenstates.
+ In Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:E-density"
+
+\end_inset
+
+, we show the plots of eigenvalue density for 
+\begin_inset Formula $M=19,\,22,\,26,$
+\end_inset
+
+ and 
+\begin_inset Formula $31$
+\end_inset
+
+.
+ For each value plots, we divide the eigenvalues into 
+\begin_inset Formula $101$
+\end_inset
+
+ buckets with equal energy width and then normalize the number of eigenvalues
+ in each bucket.
+ Each dot in the plot represents a normalized eigenvalue density of a bucket.
+ Clearly, these plots demostrate patterns of Gaussian distribution.
+ We therefore fit these data sets with the Guassion distribution 
+\begin_inset Formula 
+\[
+\rho\left(E\right)=\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}
+\]
+
+\end_inset
+
+THe fitted values of parameters 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ are listed in Talbe x.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plots/E-density-M19.pdf
+	width 45col%
+	groupId halfColumn
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename plots/E-density-M22.pdf
+	width 45col%
+	groupId halfColumn
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plots/E-density-M26.pdf
+	width 45col%
+	groupId halfColumn
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename plots/E-density-M31.pdf
+	width 45col%
+	groupId halfColumn
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:E-density"
+
+\end_inset
+
+The eigenvalue density of the stringbit model for 
+\begin_inset Formula $M=19,\,22,\,26,\,31$
+\end_inset
+
+.
+ In each plot, dots represent eigenvalue densities calculated based on formula
+ 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:SingleTraceE"
+
+\end_inset
+
+, while curves are the Gaussian fits of these dots.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+How do these parameters change with respect to 
+\begin_inset Formula $M$
+\end_inset
+
+? To figure it out, we plot 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ as functions of 
+\begin_inset Formula $M$
+\end_inset
+
+, shown as Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sigma-mu-M"
+
+\end_inset
+
+.
+ Surprisingly, the plot of 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ indicates that 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ changes linearly with respect to 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ We then fit the data and obtain
+\begin_inset Formula 
+\[
+\sigma\approx0.264925M+8.82782.
+\]
+
+\end_inset
+
+In the same plot, we also show the fitted line, which matches the data sets
+ perfectly.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plots/fit-sigma.pdf
+	width 45col%
+	groupId halfColumn
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename plots/fit-mu.pdf
+	width 45col%
+	groupId halfColumn
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sigma-mu-M"
+
+\end_inset
+
+Plots of 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu$
+\end_inset
+
+ as functions of 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The parameter 
+\begin_inset Formula $\mu$
+\end_inset
+
+ grows very slowly and seems to suggest that it will asymptote to a value.
+ But the trend is not evident.
+ To identify the 
+\begin_inset Formula $\mu$
+\end_inset
+
+ dependence on 
+\begin_inset Formula $M$
+\end_inset
+
+, we do the following.
+ Since 
+\begin_inset Formula $\mu$
+\end_inset
+
+ is the average value of the Gaussian distribution, it is propably the average
+ of all eigenvalues as well.
+ To verify the conjecture, we need to find the average of all eigenvalues.
+ 
+\end_layout
+
+\begin_layout Standard
+We develop an algorithm (we shall discuss the algorithm in details later)
+ to find the averge of eigenvalues for a given bit number 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ The results are shown in table x.
+ From the results, we see that the average of eigenvalues converge to 
+\begin_inset Formula $\frac{32}{9}$
+\end_inset
+
+.
+ However, for each 
+\begin_inset Formula $M$
+\end_inset
+
+, the value of 
+\begin_inset Formula $\mu$
+\end_inset
+
+ obtained from fit is different from the eigenvalue average calculated from
+ our algorithm.
+ The eigenvalue average converges very quickly to 
+\begin_inset Formula $\frac{32}{9}$
+\end_inset
+
+ while 
+\begin_inset Formula $\mu$
+\end_inset
+
+ does not.
+ But it should be natural to expect that, as 
+\begin_inset Formula $M$
+\end_inset
+
+ increase, the eigenvalue become more and more dense, therefore, the average
+ of Gaussian distribution should eventually be the same as the average of
+ all eigenvalues.
+ There should the value of 
+\begin_inset Formula $\mu$
+\end_inset
+
+ should also converge to 
+\begin_inset Formula $\frac{32}{9}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Then how to explain the gap between 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and eigenvalue average? First, we should expect the gap should be at most
+ of order 
+\begin_inset Formula $\frac{1}{M}$
+\end_inset
+
+.
+ To confirm that, we fit the data of 
+\begin_inset Formula $\mu$
+\end_inset
+
+ with the function 
+\begin_inset Formula 
+\[
+\mu\left(M\right)=a-\frac{b}{M}.
+\]
+
+\end_inset
+
+ The fitted curve is show as Figure x.
+ The curve fit well with the numerical data.
+ Moreover, the value of 
+\begin_inset Formula $a\approx3.556$
+\end_inset
+
+ is very close to 
+\begin_inset Formula $\frac{32}{9}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+In sum, we conclude that the eigenvalue density of the stringbit model should
+ be 
+\begin_inset Formula 
+\[
+\rho\left(E\right)=\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\sigma\left(M\right)=\alpha M+\beta,\quad\mu\left(M\right)=\gamma-\frac{\lambda}{M}+\mathcal{O}\left(\frac{1}{M^{2}}\right)
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+\alpha\approx0.264925,\quad\beta=8.82782,\quad\gamma=\frac{32}{9},\quad\lambda\approx2.655.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
