@@ -108,12 +108,12 @@ H=\frac{2}{N}\tr\left[\left(\bar{a}^{2}-i\bar{b}^{2}\right)a^{2}-\left(\bar{b}^{
 
 \end_inset
 
-The model can be solved in large 
+The model can be solved analytically in large 
 \begin_inset Formula $N$
 \end_inset
 
  limit.
- The eigenenergy of 
+ The energy eigenvalue of 
 \begin_inset Formula $M$
 \end_inset
 
@@ -148,7 +148,7 @@ E\left(\left\{ \eta_{k}\right\} \right)=8\sum_{k=1}^{\left\lfloor M/2\right\rflo
 \begin_inset Formula $E_{i}$
 \end_inset
 
- is the eigenenergy of the single-trace eigenstate 
+ is the energy of the single-trace eigenstate 
 \begin_inset Formula $\Phi_{i}\ket{0}$
 \end_inset
 
@@ -185,12 +185,16 @@ reference "fig:E-density"
 \end_inset
 
 .
- For each value plots, we divide the eigenvalues into 
+ For each value of 
+\begin_inset Formula $M$
+\end_inset
+
+, we divide the eigenvalues into 
 \begin_inset Formula $101$
 \end_inset
 
- buckets with equal energy width and then normalize the number of eigenvalues
- in each bucket.
+ buckets with equal width and then normalize the number of eigenvalues in
+ each bucket so that the integral of eigenvalue density is one.
  Each dot in the plot represents a normalized eigenvalue density of a bucket.
  Clearly, these plots demostrate patterns of Gaussian distribution.
  We therefore fit these data sets with the Guassion distribution 
@@ -201,7 +205,7 @@ reference "fig:E-density"
 
 \end_inset
 
-The fitted values of parameters 
+The values of 
 \begin_inset Formula $\mu$
 \end_inset
 
@@ -209,7 +213,7 @@ The fitted values of parameters
 \begin_inset Formula $\sigma$
 \end_inset
 
- are listed in Table 
+ obtained by fit are listed in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:mu-sigma"
@@ -870,7 +874,15 @@ reference "eq:SingleTraceE"
 \end_layout
 
 \begin_layout Standard
-How do these parameters change with respect to 
+How do 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ change with respect to 
 \begin_inset Formula $M$
 \end_inset
 
@@ -909,14 +921,20 @@ reference "fig:sigma-mu-M"
 .
  We then fit the data and obtain
 \begin_inset Formula 
-\[
-\sigma\approx0.264925M+8.82782.
-\]
+\begin{equation}
+\sigma\approx0.264925M+8.82782.\label{eq:sigma-M}
+\end{equation}
 
 \end_inset
 
-In the same plot, we also show the fitted line, which matches the data sets
- perfectly.
+In the same plot, we show that the line 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:sigma-M"
+
+\end_inset
+
+ matches well with the numerical data.
  
 \end_layout
 
@@ -992,19 +1010,27 @@ The parameter
 \begin_inset Formula $\mu$
 \end_inset
 
- also grows but with a very slow slope.
- We tried to fit it with linear function and found it does not fit well:
- the point at 
+ also grows but with a very slow speed.
+ We tried to fit it with the linear function and the result is shown in
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:sigma-mu-M"
+
+\end_inset
+
+.
+ Clearly it is not satisfactory: the point at 
 \begin_inset Formula $M=19$
 \end_inset
 
- is too far below the line and also the slope of the line is too small and
- seems to be unnatural.
- We therefore conjecture that that 
+ is too far below the line and the slope of the line is too small to be
+ natural.
+ It seems to suggest that 
 \begin_inset Formula $\mu$
 \end_inset
 
- should asymptote to a constant value.
+ has a asumptotic value.
  To identify the 
 \begin_inset Formula $\mu$
 \end_inset
@@ -1018,10 +1044,14 @@ The parameter
 \begin_inset Formula $\mu$
 \end_inset
 
- is the average value of the Gaussian distribution, it is propably the average
- of all eigenvalues as well.
- To verify the conjecture, we need to find the average of all eigenvalues.
- 
+ is the average of Gaussian distribution, it is propably the average of
+ the discrete eigenvalues as well.
+ To verify the conjecture, we need to find the average of discrete eigenvalues
+ for a given 
+\begin_inset Formula $M$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1719,32 +1749,43 @@ reference "tab:ave-eigenvalue"
 \end_inset
 
 .
- However, for each 
-\begin_inset Formula $M$
-\end_inset
-
-, the value of 
-\begin_inset Formula $\mu$
-\end_inset
-
- obtained from fit is different from the eigenvalue average calculated from
- our algorithm.
  While the eigenvalue average converges very quickly to 
 \begin_inset Formula $\frac{32}{9}$
 \end_inset
 
- while 
+, the 
 \begin_inset Formula $\mu$
 \end_inset
 
- does not, it is natural to expect that, as 
+ value does not.
+ For example at 
+\begin_inset Formula $M=31$
+\end_inset
+
+, the average of eigenvalues is 
+\begin_inset Formula $3.55555$
+\end_inset
+
+ and the 
+\begin_inset Formula $\mu$
+\end_inset
+
+ value is 
+\begin_inset Formula $3.469$
+\end_inset
+
+.
+ But it is natural to expect that, as 
 \begin_inset Formula $M$
 \end_inset
 
- increases and the eigenvalue become denser and denser, the average of Gaussian
- distribution should be closer and closer to the average of all eigenvalues.
+ increases and the eigenvalues become denser and denser, 
+\begin_inset Formula $\mu$
+\end_inset
+
+ should be closer and closer to the average of eigenvalues.
  Indeed, that is the case.
- We fit the the 
+ We fit the 
 \begin_inset Formula $\mu$
 \end_inset
 
@@ -1752,13 +1793,12 @@ reference "tab:ave-eigenvalue"
 \begin_inset Formula $\mu\left(M\right)=a-\frac{b}{M}$
 \end_inset
 
- and the curve and numerical data matches much better than the linear fit.
+ and the curve and numerical data matche much better than the linear fit.
  Moreover, the value 
 \begin_inset Formula $a=3.556\approx\frac{32}{9}$
 \end_inset
 
-.
- Our conjecture is confirmed.
+ indicates that our conjecture is correct.
 \end_layout
 
 \begin_layout Standard
