@@ -1203,7 +1203,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mu$
+\begin_inset Formula $E_{\mathrm{ave}}$
 \end_inset
 
 
@@ -1422,7 +1422,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mu$
+\begin_inset Formula $E_{\mathrm{ave}}$
 \end_inset
 
 
@@ -1608,7 +1608,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mu$
+\begin_inset Formula $E_{\mathrm{ave}}$
 \end_inset
 
 
@@ -1712,7 +1712,7 @@ name "tab:ave-eigenvalue"
 
 \end_inset
 
-Average of eigenvalues
+Average of energy eigenvalues
 \end_layout
 
 \end_inset
@@ -1730,7 +1730,8 @@ Average of eigenvalues
 \end_layout
 
 \begin_layout Standard
-We develop an algorithm (we shall discuss the algorithm in details later)
+We develop an algorithm (we shall discuss the algorithm in details later,
+ it offers some insights about energy eigenvalues of single-trace states)
  to find the averge of eigenvalues for a given bit number 
 \begin_inset Formula $M$
 \end_inset
