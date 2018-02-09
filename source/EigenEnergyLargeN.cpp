@@ -84,6 +84,12 @@ void EigenEnergyLargeN::Calculate()
 
 void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 {
+    // if already calculated, return.
+    if (singleTraceEnergies.size() > 0)
+    {
+        return;
+    }
+
     singleTraceEnergies.reserve(M + 1);
     singleTraceEnergies.push_back(vector<double>(1, 0.0));
 
@@ -93,13 +99,13 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
         v.reserve(StateCollection::Inst()->SingleTraceStateNumber(bit));
         double e0 = -4 / tan(PI/(2 * bit));
 
-	    for (int i = 0; i < (1<<bit); i+=2)
+	    for (i64 i = 0; i < ((i64)1<<bit); i+=2)
 	    {
 		    double deltE = 0.0;
 		    int modes = 0;
-		    for (int j = 1; (1<<j) <= i; j++)
+		    for (int j = 1; ((i64)1<<j) <= i; j++)
 		    {
-			    if ((i & (1<<j)) == 0) continue;
+			    if ((i & ((i64)1<<j)) == 0) continue;
 			    deltE += 8 * sin(j * PI/bit);
 			    modes += j;
 		    }
@@ -308,7 +314,7 @@ void EigenEnergyLargeN::CalcFluctuation(double beta)
     ofs.close();
 }
 
-void EigenEnergyLargeN::SaveSingleEnergies(int bit)
+void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
 {
     if (s != 1)
 	{
@@ -316,15 +322,51 @@ void EigenEnergyLargeN::SaveSingleEnergies(int bit)
 		return;
 	}
 
-    string file = "EEs=" + ToString(s) + "M=" + ToString(M) + "s.txt";
+    string file = "EEs=" + ToString(s) + "M=" + ToString(bit) + "s";
+
+    if (buckets > 0) file += "g.txt";
+	else file += ".txt";
 
 	ofstream ofs(file.c_str());
 
-    for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
-	{
-		ofs << singleTraceEnergies[bit][i] << endl;
-	}
+    if (buckets <= 0)
+    {
+        for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
+	    {
+		    ofs << singleTraceEnergies[bit][i] << endl;
+	    }
+    }
+    else
+    {
+        double range = 4.0 * s /tan(PI/(2 * bit));
+		vector<pair<double, int> > res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
+		for (int i = 0; i < res.size(); i++)
+		{
+			ofs << res[i].first << ' ' << res[i].second << endl;
+		}
+    }
+
     ofs.close();
+}
+
+vector<pair<double, int> > EigenEnergyLargeN::BucketEnergies(vector<double>& states, int buckets, double range)
+{
+    double delta = range * 2 / buckets;
+	vector<pair<double, int> > res;
+	for (int i = 0; i < buckets; i++)
+	{
+		res.push_back(make_pair(-range + delta * (i + .5), 0));
+	}
+
+	for (int i = 0; i < states.size(); i++)
+	{
+		int pos = (int)floor((states[i] + range) / delta);
+		if (pos == -1) pos = 0;
+		if (pos == buckets) pos = buckets - 1;
+		res[pos].second++; 
+	}
+
+    return res;
 }
 
 void EigenEnergyLargeN::SaveEnergies(int buckets)
@@ -350,21 +392,7 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 	else
 	{
 		double range = 4.0 * s /tan(PI/(2 * M));
-		double delta = range * 2 / buckets;
-		vector<pair<double, int> > res;
-		for (int i = 0; i < buckets; i++)
-		{
-			res.push_back(make_pair(-range + delta * (i + .5), 0));
-		}
-
-		for (int i = 0; i < this->allStates.size(); i++)
-		{
-			int pos = (int)floor((this->allStates[i] + range) / delta);
-			if (pos == -1) pos = 0;
-			if (pos == buckets) pos = buckets - 1;
-			res[pos].second++; 
-		}
-
+		vector<pair<double, int> > res = BucketEnergies(this->allStates, buckets, range);
 		for (int i = 0; i < res.size(); i++)
 		{
 			ofs << res[i].first << ' ' << res[i].second << endl;

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 #include <cstdlib>
 #include <Eigen/Eigenvalues>
 #include <Eigen/Dense>
@@ -105,7 +106,7 @@ void GenerateStates(bool output)
     cout << "average energy of each bit:" << endl;    
     for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
     {
-        cout << i << ": " << inst->AverageEnergy(i) << endl;
+        cout << i << ": " << setprecision(10) << inst->AverageEnergy(i) << endl;
     }
 }
 
@@ -301,13 +302,27 @@ void CalculateAllEigenvalues(int bits)
 	{
         ee.CalculateByDynamics();
         ee.SaveEnergies(101);
-        ee.SaveSingleEnergies(bits);
-        ee.CalculateThermo();
+        //ee.SaveSingleEnergies(bits);
+        //ee.CalculateThermo();
+        //ee.CalcFluctuation(1.5);
 	}
 	else
 	{
 		ee.CalculateByEigen();
 	}
+}
+
+void SaveSingleEnergies(int minBit, int maxBit)
+{
+    cout << "Calculating large N single-trace energies for bits=" << maxBit << " ..." << endl;
+	EigenEnergyLargeN ee(maxBit);
+
+    ee.CalcAllSingleTraceEnergies();
+
+    for (int i = minBit; i <= maxBit; i++)
+    {
+        ee.SaveSingleEnergies(i, 101);
+    }
 }
 
 int main(int argc, char* argv[])
@@ -340,9 +355,19 @@ int main(int argc, char* argv[])
 			cout << "need one more integer type  parameter. ";
 			return -1;
 		}
-	
-		CalculateAllEigenvalues(atoi(argv[2]));
+
+	    CalculateAllEigenvalues(atoi(argv[2]));
 	}
+    else if (cmd == "-es")
+    {
+        if (argc < 4)
+		{
+			cout << "need one more integer type  parameter. ";
+			return -1;
+		}
+
+        SaveSingleEnergies(atoi(argv[2]), atoi(argv[3]));
+    }
     
     cout << "Time: " << watch.Stop() << " seconds." << endl;
 	return 0;

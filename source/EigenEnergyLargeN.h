@@ -63,10 +63,6 @@ private:
 
 	void Partition(int n, int k, i64 mask);
 
-    // this function calculates all energies of single trace with bit number <= M and stores 
-    // results in singleTraceEnergies.
-    void CalcAllSingleTraceEnergies();
-
     // find all bosonic multi-trace energies built out of n number of b-bit single trace states.
     // store results in statesByBoson.
     void BuildBosonicMultiTraceEnergies(int b, int n);
@@ -100,6 +96,12 @@ private:
     // res will be of size size(a)*size(b), and each element is of the form a[i] + b[j].
     static void MergeEnergy(vector<double>& a, vector<double>& b, vector<double>& res);
 
+    // divide the energy eigenvalues into buckets. 
+    // states: the energy eigenvalues to divide
+    // buckets: number of buckets
+    // range: all eigenvalues lie in the interval (-range, range).
+    static vector<pair<double, int> > BucketEnergies(vector<double>& states, int buckets, double range);
+
 public:
 	// constructor.
 	// bits: number of bits of the stringbit system, i.e, the M in the paper
@@ -117,6 +119,10 @@ public:
 	// invN: the value of 1/N, should be very small
 	void CalculateByEigen(double invN = DefaultInvN, bool calcEigenvector = true);
 
+    // this function calculates all energies of single trace with bit number <= M and stores 
+    // results in singleTraceEnergies.
+    void CalcAllSingleTraceEnergies();
+
 	void Calculate();
 
 	void CalculateByDynamics();
@@ -129,9 +135,9 @@ public:
 	// buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
 	void SaveEnergies(int buckets = 0);
 
-    void SaveSingleEnergies(int bit);
-
-	//void LoadFromFile(string file);
+    // save single-trace eigen energies to file.
+    // buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
+    void SaveSingleEnergies(int bit, int buckets = 0);
 
 	const vector<pair<double, int> > Energies() { return energies; }
 };
