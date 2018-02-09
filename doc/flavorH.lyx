@@ -219,11 +219,24 @@ H=\sum_{F,G}J_{FG}H^{FG},\quad H^{FG}=\sum_{i=1}^{5}H_{i}^{FG},
 \end_inset
 
 .
- Perticularly, we can let 
+ Particularly, we can let 
 \begin_inset Formula $J_{FG}$
 \end_inset
 
  be random coefficients and the model become a SYK-like model.
+ In order to make it a nontrivial model, we also need to show that 
+\begin_inset Formula 
+\[
+\left[H^{FG},H^{IJ}\right]\neq0.
+\]
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Section
+Verify supersymmetry
 \end_layout
 
 \begin_layout Standard
@@ -478,6 +491,78 @@ Now let calculate the other part of commutation.
 \[
 \left[H^{FG},Q\right]=0.
 \]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset Formula $\left[H^{FG},H^{IJ}\right]\neq0$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Standard
+To show the commutation is nonzero, we only need to show its imaginary part
+ is nonzero, which is 
+\begin_inset Formula 
+\[
+\mathcal{B}=\left[H_{1}^{FG}+H_{2}^{FG}+H_{3}^{FG},H_{4}^{IJ}+H_{5}^{IJ}\right]-\left(IJ\leftrightarrow FG\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Alternatively, let us consider 
+\begin_inset Formula $\left[H^{FG},H^{GI}\right]$
+\end_inset
+
+, where 
+\begin_inset Formula $F,\,G,\,I$
+\end_inset
+
+ are distinct indicies.
+ We consider 
+\begin_inset Formula 
+\begin{align*}
+\left[\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F},\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}\right] & =\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}-\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\\
+ & =\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}-\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}=0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{4}^{FG},H_{5}^{GI}\right] & =\left[\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F},\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\right]\\
+ & =\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}-\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\\
+ & =\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}b^{F}-\tr\bar{a}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}b^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{5}^{FG},H_{4}^{GI}\right] & =\left[\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F},\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\right]\\
+ & =\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}-\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\\
+ & =\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}a^{F}-\tr\bar{b}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}a^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{4}^{FG},H_{5}^{GI}\right]+\left[H_{5}^{FG},H_{4}^{GI}\right] & =\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}b^{F}-\tr\bar{a}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}b^{F}\\
+ & +\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}a^{F}-\tr\bar{b}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}a^{F}\\
+ & =
+\end{align*}
 
 \end_inset
 
