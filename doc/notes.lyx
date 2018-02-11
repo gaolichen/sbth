@@ -1860,9 +1860,9 @@ Plot of
 In sum, we conclude that the eigenvalue density of the stringbit model should
  be 
 \begin_inset Formula 
-\[
-\rho\left(E\right)=\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}
-\]
+\begin{equation}
+\rho\left(E\right)=\frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}\label{eq:E_distr}
+\end{equation}
 
 \end_inset
 
@@ -1879,6 +1879,92 @@ In sum, we conclude that the eigenvalue density of the stringbit model should
 \[
 \alpha\approx0.264925,\quad\beta\approx8.82782,\quad\gamma=\frac{32}{9},\quad\lambda\approx2.655.
 \]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Thermodynamics
+\end_layout
+
+\begin_layout Standard
+With the eigenvalue density distribution, one can easily perform some calculatio
+n of thermodynamics.
+ Let us consider the partition function of the model.
+\end_layout
+
+\begin_layout Standard
+Since the model is formulated in lightcone coordinate, the Hamiltonian in
+ Minkoski space should be 
+\begin_inset Formula $P^{0}=\frac{1}{\sqrt{2}}\left(P^{+}+P^{-}\right)$
+\end_inset
+
+, where 
+\begin_inset Formula $\frac{P^{-}}{\sqrt{2}}$
+\end_inset
+
+ is identified the Hamiltonian conjugates to lightcone time component 
+\begin_inset Formula $x^{+}$
+\end_inset
+
+, and 
+\begin_inset Formula $P^{+}$
+\end_inset
+
+ equals 
+\begin_inset Formula $Mm$
+\end_inset
+
+, with 
+\begin_inset Formula $m$
+\end_inset
+
+ being the mass of string bit.
+ Given above, the thermal partition funtion for 
+\begin_inset Formula $M$
+\end_inset
+
+-bit system is 
+\begin_inset Formula 
+\[
+Z\left(M,\beta\right)=\tr e^{-\beta\left(Mm+H\right)}.
+\]
+
+\end_inset
+
+ With the eigenvalue density distribution, we can write 
+\begin_inset Formula 
+\[
+Z\left(M,\beta\right)=\int_{0}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)}\rho\left(E\right)dE,
+\]
+
+\end_inset
+
+ where we have restored the dimensional factor 
+\begin_inset Formula $\frac{T_{0}}{m}$
+\end_inset
+
+ of the Hamiltonian, where 
+\begin_inset Formula $T_{0}$
+\end_inset
+
+ is the string tension.
+ Substituting 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:E_distr"
+
+\end_inset
+
+ into above, we find 
+\begin_inset Formula 
+\begin{align*}
+Z\left(M,\beta\right) & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{0}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}dE\\
+ & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{0}^{\infty}e^{-\beta Mm-\frac{\left(E-\mu+\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}-\left(\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}+2\mu\frac{T_{0}}{m}\beta\sigma^{2}}{2\sigma^{2}}}dE\\
+ & =2^{M}e^{-\beta Mm+\left(\frac{T_{0}}{m}\right)^{2}\beta^{2}\sigma^{2}-\frac{T_{0}}{m}\mu\beta}
+\end{align*}
 
 \end_inset
 
