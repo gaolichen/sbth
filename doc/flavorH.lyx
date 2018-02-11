@@ -91,12 +91,23 @@
 Hamiltonian with Flavor indices
 \end_layout
 
+\begin_layout Author
+Gaoli Chen
+\end_layout
+
 \begin_layout Standard
 In arbitary 
 \begin_inset Formula $s$
 \end_inset
 
-, the Hamiltonian with flavor indices are defined as 
+, the Hamiltonian with flavor indices are defined as
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thorn:2014hia"
+
+\end_inset
+
+ 
 \begin_inset Formula 
 \[
 H=\sum_{i=1}^{5}\sum_{F,G}H_{i}^{FG}
@@ -113,39 +124,7 @@ H=\sum_{i=1}^{5}\sum_{F,G}H_{i}^{FG}
 \end_inset
 
  are flavor indicies.
- In ref.
  
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Thorn:2014hia"
-
-\end_inset
-
-, 
-\begin_inset Formula $F$
-\end_inset
-
- and 
-\begin_inset Formula $G$
-\end_inset
-
- represent collections of indicies, here we cosider a simple case that 
-\begin_inset Formula $F$
-\end_inset
-
-, 
-\begin_inset Formula $G$
-\end_inset
-
- are just regular indicies
-\begin_inset Formula 
-\[
-F,G=1,2,\cdots.
-\]
-
-\end_inset
-
- The 
 \begin_inset Formula $H_{i}^{FG}$
 \end_inset
 
@@ -192,7 +171,35 @@ H_{5}^{FG}=-\frac{2i}{N}\sum_{n=0}^{s-1}\sum_{k=0}^{s-1}\frac{\left(-1\right)^{k
 
 \end_inset
 
-We now define 
+In ref.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thorn:2014hia"
+
+\end_inset
+
+, 
+\begin_inset Formula $F$
+\end_inset
+
+ and 
+\begin_inset Formula $G$
+\end_inset
+
+ represent collections of indicies, here we cosider a simple case that 
+\begin_inset Formula $F$
+\end_inset
+
+, 
+\begin_inset Formula $G$
+\end_inset
+
+ are just single value indicies, i.e, 
+\begin_inset Formula $F,G=1,2,\cdots.$
+\end_inset
+
+ We then define 
 \begin_inset Formula 
 \[
 H=\sum_{F,G}J_{FG}H^{FG},\quad H^{FG}=\sum_{i=1}^{5}H_{i}^{FG},
@@ -224,32 +231,33 @@ H=\sum_{F,G}J_{FG}H^{FG},\quad H^{FG}=\sum_{i=1}^{5}H_{i}^{FG},
 \end_inset
 
  be random coefficients and the model become a SYK-like model.
- In order to make it a nontrivial model, we also need to show that 
-\begin_inset Formula 
-\[
-\left[H^{FG},H^{IJ}\right]\neq0.
-\]
-
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Section
-Verify supersymmetry
-\end_layout
-
-\begin_layout Standard
-Now let us show that 
+ we also want 
 \begin_inset Formula $H^{FG}$
 \end_inset
 
- is supersymmetric in the 
+ not commute with each other, otherwise the Hilbert space can be factored
+ as tensor product of those of individual 
+\begin_inset Formula $H^{FG}$
+\end_inset
+
+ and the model become trivial.
+ In the following, let us check that 
+\begin_inset Formula $H^{FT}$
+\end_inset
+
+ is supersymmetric and not commute with each other in the 
 \begin_inset Formula $s=1$
 \end_inset
 
  case.
- Let us define 
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Formula $s=1$
+\end_inset
+
+, let us define 
 \begin_inset Formula 
 \[
 a\equiv\phi,\quad b=\phi_{1}.
@@ -257,7 +265,7 @@ a\equiv\phi,\quad b=\phi_{1}.
 
 \end_inset
 
-Then 
+Then the Hamiltonians become 
 \begin_inset Formula 
 \begin{align*}
 H_{1}^{FG} & =\frac{2}{N}\sum_{n=0}^{s}\sum_{k=0}^{s}\frac{s-2n}{n!k!}\tr\bar{\phi}_{a_{1}\cdots a_{n}}^{F}\bar{\phi}_{b_{1}\cdots b_{k}}^{G}\phi_{b_{1}\cdots b_{k}}^{G}\phi_{a_{1}\cdots a_{n}}^{F}\\
@@ -297,12 +305,25 @@ H_{4}^{FG} & =\frac{2i}{N}\sum_{n=0}^{s-1}\sum_{k=0}^{s-1}\frac{\left(-1\right)^
 \begin_inset Formula 
 \begin{align*}
 H_{5}^{FG} & =-\frac{2i}{N}\sum_{n=0}^{s-1}\sum_{k=0}^{s-1}\frac{\left(-1\right)^{k}}{n!k!}\tr\bar{\phi}_{ba_{1}\cdots a_{n}}^{F}\bar{\phi}_{bb_{1}\cdots b_{k}}^{G}\phi_{b_{1}\cdots b_{k}}^{G}\phi_{a_{1}\cdots a_{n}}^{F}\\
- & =-\frac{2i}{N}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}
+ & =-\frac{2i}{N}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}.
 \end{align*}
 
 \end_inset
 
+ The canonical commutation relations among creation and anhilation operators
+ are 
+\begin_inset Formula 
+\[
+\left[\left(a_{\beta}^{\alpha}\right)^{I},\left(\bar{a}_{\delta}^{\gamma}\right)^{J}\right]=\delta_{IJ}\delta_{\delta}^{\alpha}\delta_{\beta}^{\gamma},\quad\left\{ \left(b_{\beta}^{\alpha}\right)^{I},\left(\bar{b}_{\delta}^{\gamma}\right)^{J}\right\} =\delta_{IJ}\delta_{\delta}^{\alpha}\delta_{\beta}^{\gamma}.
+\]
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Verify supersymmetry
 \end_layout
 
 \begin_layout Standard
@@ -314,19 +335,11 @@ Q=\sum_{I}\tr\left(e^{i\frac{\pi}{4}}\bar{a}^{I}b^{I}+e^{-i\frac{\pi}{4}}\bar{b}
 
 \end_inset
 
- The canonical commutation relations are 
-\begin_inset Formula 
-\[
-\left[\left(a_{\beta}^{\alpha}\right)^{I},\left(\bar{a}_{\delta}^{\gamma}\right)^{J}\right]=\delta_{IJ}\delta_{\delta}^{\alpha}\delta_{\beta}^{\gamma},\quad\left\{ \left(b_{\beta}^{\alpha}\right)^{I},\left(\bar{b}_{\delta}^{\gamma}\right)^{J}\right\} =\delta_{IJ}\delta_{\delta}^{\alpha}\delta_{\beta}^{\gamma}.
-\]
-
-\end_inset
-
 
 \end_layout
 
 \begin_layout Standard
-Let now find 
+Let us now calculate 
 \begin_inset Formula $\left[H^{FG},Q\right]$
 \end_inset
 
@@ -456,7 +469,7 @@ For convenience, let us drop all the
 \end_layout
 
 \begin_layout Standard
-Now let calculate the other part of commutation.
+Now let calculate the other part of the commutation.
  
 \begin_inset Formula 
 \begin{align*}
@@ -498,10 +511,11 @@ Now let calculate the other part of commutation.
 \end_layout
 
 \begin_layout Section
+Verify 
 \begin_inset Formula $\left[H^{FG},H^{IJ}\right]\neq0$
 \end_inset
 
-?
+
 \end_layout
 
 \begin_layout Standard
@@ -509,7 +523,7 @@ To show the commutation is nonzero, we only need to show its imaginary part
  is nonzero, which is 
 \begin_inset Formula 
 \[
-\mathcal{B}=\left[H_{1}^{FG}+H_{2}^{FG}+H_{3}^{FG},H_{4}^{IJ}+H_{5}^{IJ}\right]-\left(IJ\leftrightarrow FG\right).
+\Im\left[H^{FG},H^{IJ}\right]=\left[H_{1}^{FG}+H_{2}^{FG}+H_{3}^{FG},H_{4}^{IJ}+H_{5}^{IJ}\right]-\left(IJ\leftrightarrow FG\right).
 \]
 
 \end_inset
@@ -518,7 +532,7 @@ To show the commutation is nonzero, we only need to show its imaginary part
 \end_layout
 
 \begin_layout Standard
-Alternatively, let us consider 
+Let us consider 
 \begin_inset Formula $\left[H^{FG},H^{GI}\right]$
 \end_inset
 
@@ -527,7 +541,208 @@ Alternatively, let us consider
 \end_inset
 
  are distinct indicies.
- We consider 
+\begin_inset Formula 
+\begin{align*}
+\left[H_{1}^{FG},H_{4}^{GI}\right] & =\left[\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}+\tr\bar{a}^{F}\bar{b}^{G}b^{G}a^{F}-\tr\bar{b}^{F}\bar{a}^{G}a^{G}b^{F}-\tr\bar{b}^{F}\bar{b}^{G}b^{G}b^{F},\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\right]\\
+ & ={\color{red}\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}}-\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\\
+ & +\tr\bar{a}^{F}\bar{b}^{G}b^{G}a^{F}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}-{\color{green}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\tr\bar{a}^{F}\bar{b}^{G}b^{G}a^{F}}\\
+ & -{\color{magenta}\tr\bar{b}^{F}\bar{a}^{G}a^{G}b^{F}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}}+\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\tr\bar{b}^{F}\bar{a}^{G}a^{G}b^{F}\\
+ & -\tr\bar{b}^{F}\bar{b}^{G}b^{G}b^{F}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}+{\color{blue}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\tr\bar{b}^{F}\bar{b}^{G}b^{G}b^{F}}\\
+ & ={\color{red}\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}a^{F}}-{\color{green}\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}a^{F}}\\
+ & -{\color{magenta}\tr\bar{b}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}}+{\color{blue}\tr\bar{b}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}}\\
+ & =0
+\end{align*}
+
+\end_inset
+
+ In the second and third equalities, we used color to indicate which term
+ comes from which.
+ Terms without color are cancelled out by the terms in the same line.
+ 
+\begin_inset Formula 
+\begin{align*}
+\left[H_{1}^{FG},H_{5}^{GI}\right] & =\left[\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}+\tr\bar{a}^{F}\bar{b}^{G}b^{G}a^{F}-\tr\bar{b}^{F}\bar{a}^{G}a^{G}b^{F}-\tr\bar{b}^{F}\bar{b}^{G}b^{G}b^{F},-\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\right]\\
+ & =-\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}+{\color{red}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}}\\
+ & -{\color{blue}\tr\bar{a}^{F}\bar{b}^{G}b^{G}a^{F}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}}+\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\tr\bar{a}^{F}\bar{b}^{G}b^{G}a^{F}\\
+ & +\tr\bar{b}^{F}\bar{a}^{G}a^{G}b^{F}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}-{\color{green}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\tr\bar{b}^{F}\bar{a}^{G}a^{G}b^{F}}\\
+ & +{\color{magenta}\tr\bar{b}^{F}\bar{b}^{G}b^{G}b^{F}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}}-\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\tr\bar{b}^{F}\bar{b}^{G}b^{G}b^{F}\\
+ & ={\color{red}\tr\bar{a}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}}-{\color{blue}\tr\bar{a}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}}\\
+ & -{\color{green}\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}b^{F}}+{\color{magenta}\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}b^{F}}\\
+ & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{2}^{FG},H_{4}^{GI}\right] & =\left[\tr\bar{a}^{F}\bar{b}^{G}a^{G}b^{F},\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\right]\\
+ & =\tr\bar{a}^{F}\bar{b}^{G}a^{G}b^{F}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}-\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\tr\bar{a}^{F}\bar{b}^{G}a^{G}b^{F}\\
+ & =\tr\bar{a}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}-\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}b^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{2}^{FG},H_{5}^{GI}\right] & =\left[\tr\bar{a}^{F}\bar{b}^{G}a^{G}b^{F},-\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\right]\\
+ & =-\tr\bar{a}^{F}\bar{b}^{G}a^{G}b^{F}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}+\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\tr\bar{a}^{F}\bar{b}^{G}a^{G}b^{F}\\
+ & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{3}^{FG},H_{4}^{GI}\right] & =\left[\tr\bar{b}^{F}\bar{a}^{G}b^{G}a^{F},\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\right]\\
+ & =\tr\bar{b}^{F}\bar{a}^{G}b^{G}a^{F}\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}-\tr\bar{a}^{G}\bar{a}^{I}b^{I}b^{G}\tr\bar{b}^{F}\bar{a}^{G}b^{G}a^{F}\\
+ & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{3}^{FG},H_{4}^{GI}\right] & =\left[\tr\bar{b}^{F}\bar{a}^{G}b^{G}a^{F},-\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\right]\\
+ & =-\tr\bar{b}^{F}\bar{a}^{G}b^{G}a^{F}\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}+\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\tr\bar{b}^{F}\bar{a}^{G}b^{G}a^{F}\\
+ & =-\tr\bar{b}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}+\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}a^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{1}^{FG}+H_{2}^{FG}+H_{3}^{FG},H_{4}^{GI}+H_{5}^{GI}\right] & =\tr\bar{a}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}-\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}b^{F}\\
+ & -\tr\bar{b}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}+\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}a^{F}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now calculate 
+\begin_inset Formula 
+\[
+\left[H_{1}^{GI}+H_{2}^{GI}+H_{3}^{GI},H_{4}^{FG}+H_{5}^{FG}\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{1}^{GI},H_{4}^{FG}\right] & =\left[\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}+\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}-\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}-\tr\bar{b}^{G}\bar{b}^{I}b^{I}b^{G},\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\right]\\
+ & ={\color{red}\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}}-\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}\\
+ & +{\color{green}\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}}-\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}\\
+ & -\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}+{\color{blue}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}}\\
+ & -\tr\bar{b}^{G}\bar{b}^{I}b^{I}b^{G}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}+{\color{magenta}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\tr\bar{b}^{G}\bar{b}^{I}b^{I}b^{G}}\\
+ & ={\color{red}\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}b^{G}b^{F}}+{\color{green}\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}b^{G}b^{F}}\\
+ & +{\color{blue}\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}b^{G}b^{F}}+{\color{magenta}\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}b^{G}b^{F}}\\
+ & =2\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}b^{G}b^{F}+2\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}b^{G}b^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{1}^{GI},H_{5}^{FG}\right] & =\left[\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}+\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}-\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}-\tr\bar{b}^{G}\bar{b}^{I}b^{I}b^{G},-\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\right]\\
+ & =-\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}+{\color{red}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}}\\
+ & -\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}+{\color{blue}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}}\\
+ & +{\color{green}\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}}-\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}\\
+ & +{\color{magenta}\tr\bar{b}^{G}\bar{b}^{I}b^{I}b^{G}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}}-\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\tr\bar{b}^{G}\bar{b}^{I}b^{I}b^{G}\\
+ & ={\color{red}\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}}+{\color{blue}\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}}\\
+ & +{\color{green}\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}}+{\color{magenta}\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}}\\
+ & =2\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}+2\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{2}^{GI},H_{4}^{FG}\right] & =\left[\tr\bar{a}^{G}\bar{b}^{I}a^{I}b^{G},\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\right]\\
+ & =\tr\bar{a}^{G}\bar{b}^{I}a^{I}b^{G}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}-\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\tr\bar{a}^{G}\bar{b}^{I}a^{I}b^{G}\\
+ & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{2}^{GI},H_{5}^{FG}\right] & =\left[\tr\bar{a}^{G}\bar{b}^{I}a^{I}b^{G},-\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\right]\\
+ & =-\tr\bar{a}^{G}\bar{b}^{I}a^{I}b^{G}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}+\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{b}^{I}a^{I}b^{G}\\
+ & =-\tr\bar{b}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}+\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}a^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{3}^{GI},H_{4}^{FG}\right] & =\left[\tr\bar{b}^{G}\bar{a}^{I}b^{I}a^{G},\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\right]\\
+ & =\tr\bar{b}^{G}\bar{a}^{I}b^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}-\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F}\tr\bar{b}^{G}\bar{a}^{I}b^{I}a^{G}\\
+ & =\tr\bar{a}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}-\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}b^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{3}^{GI},H_{5}^{FG}\right] & =\left[\tr\bar{b}^{G}\bar{a}^{I}b^{I}a^{G},-\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\right]\\
+ & =-\tr\bar{b}^{G}\bar{a}^{I}b^{I}a^{G}\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}+\tr\bar{b}^{F}\bar{b}^{G}a^{G}a^{F}\tr\bar{b}^{G}\bar{a}^{I}b^{I}a^{G}\\
+ & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[H_{1}^{GI}+H_{2}^{GI}+H_{3}^{GI},H_{4}^{FG}+H_{5}^{FG}\right] & =2\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}b^{G}b^{F}+2\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}b^{G}b^{F}\\
+ & +2\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}+2\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}\\
+ & -\tr\bar{b}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}+\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}a^{F}\\
+ & +\tr\bar{a}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}-\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}b^{F}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\Im\left[H^{FG},H^{GI}\right] & ={\color{red}\tr\bar{a}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}}-{\color{green}\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}b^{F}}-{\color{blue}\tr\bar{b}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}}+{\color{magenta}\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}a^{F}}\\
+ & -\left(2\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}b^{G}b^{F}+2\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}b^{G}b^{F}+2\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}+2\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}\right)\\
+ & -\left(-{\color{blue}\tr\bar{b}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}a^{F}}+{\color{magenta}\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}a^{F}}+{\color{red}\tr\bar{a}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}b^{F}}-{\color{green}\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}b^{F}}\right)\\
+ & =-2\left(\tr\bar{a}^{F}\bar{a}^{G}\bar{a}^{I}a^{I}b^{G}b^{F}+\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}b^{G}b^{F}+\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}a^{I}a^{G}a^{F}+\tr\bar{b}^{F}\bar{b}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}\right)
+\end{align*}
+
+\end_inset
+
+ where colored terms cancell out each other.
+ It implies that 
+\begin_inset Formula $\left[H^{FG},H^{GI}\right]\neq0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Some other calculation:
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
 \left[\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F},\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}\right] & =\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}-\tr\bar{a}^{G}\bar{a}^{I}a^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\\
@@ -537,6 +752,9 @@ Alternatively, let us consider
 \end_inset
 
 
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{align*}
 \left[H_{4}^{FG},H_{5}^{GI}\right] & =\left[\tr\bar{a}^{F}\bar{a}^{G}b^{G}b^{F},\tr\bar{b}^{G}\bar{b}^{I}a^{I}a^{G}\right]\\
@@ -560,9 +778,45 @@ Alternatively, let us consider
 \begin_inset Formula 
 \begin{align*}
 \left[H_{4}^{FG},H_{5}^{GI}\right]+\left[H_{5}^{FG},H_{4}^{GI}\right] & =\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}a^{I}a^{G}b^{F}-\tr\bar{a}^{F}\bar{b}^{G}\bar{b}^{I}a^{I}b^{G}b^{F}\\
- & +\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}a^{F}-\tr\bar{b}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}a^{F}\\
- & =
+ & +\tr\bar{b}^{F}\bar{b}^{G}\bar{a}^{I}b^{I}b^{G}a^{F}-\tr\bar{b}^{F}\bar{a}^{G}\bar{a}^{I}b^{I}a^{G}a^{F}
 \end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\left[H_{1}^{FG}+H_{2}^{FG}+H_{3}^{FG},H_{1}^{GI}+H_{2}^{GI}+H_{3}^{GI}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\left[\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F},\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}\right] & =\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}-\tr\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\\
+ & =\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}-\tr\bar{a}^{F}\bar{a}^{G}\bar{b}^{I}b^{I}a^{G}a^{F}=0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F},\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}\right] & =\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}-\tr\bar{b}^{G}\bar{a}^{I}a^{I}b^{G}\tr\bar{a}^{F}\bar{a}^{G}a^{G}a^{F}\\
+ & =0
+\end{align*}
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
