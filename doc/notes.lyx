@@ -1886,6 +1886,70 @@ In sum, we conclude that the eigenvalue density of the stringbit model should
 \end_layout
 
 \begin_layout Section
+Analytic derivation
+\end_layout
+
+\begin_layout Standard
+Let us derive the formula analytically.
+ 
+\begin_inset Formula 
+\[
+\mathcal{P}=\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}e^{2\pi ik\mathcal{N}/M}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\rho\left(E\right)\sigma & =\lim_{\sigma\to0}\sum_{\left\{ n_{i}\right\} }\frac{1}{\sqrt{2\pi}\sigma}\exp\left[\frac{\left(E-\sum_{i}\sin\frac{n_{i}\pi}{M}\right)^{2}}{2\sigma^{2}}\right]\mathcal{P}\sum_{i}\sin\frac{n_{i}\pi}{M}\\
+ & =\lim_{\sigma\to0}\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\frac{1}{\sqrt{2\pi}\sigma}\sum_{\left\{ n_{i}\right\} }\exp\left[\frac{\left(E-\sum_{i}\sin\frac{n_{i}\pi}{M}\right)^{2}}{2\sigma^{2}}\right]e^{2\pi ik\mathcal{N}/M}\sum_{i}\sin\frac{n_{i}\pi}{M}\\
+ & \equiv\lim_{\sigma\to0}\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\frac{1}{\sqrt{2\pi}\sigma}\sum_{\left\{ n_{i}\right\} }f\left(\left\{ n_{i}\right\} \right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+f\left(\left\{ n_{i}\right\} \right) & =\sum_{\left\{ n_{i}\right\} }\exp\left[\frac{E^{2}-2E\sum_{i}\sin\frac{n_{i}\pi}{M}+\left(\sum_{i}\sin\frac{n_{i}\pi}{M}\right)^{2}}{2\sigma^{2}}\right]e^{2\pi ik\mathcal{N}/M}\sum_{i}\sin\frac{n_{i}\pi}{M}\\
+ & =-\frac{\sigma^{2}}{E}\frac{d}{d\alpha}\exp\left[\frac{E^{2}-2\alpha E\sum_{i}\sin\frac{n_{i}\pi}{M}+\left(\sum_{i}\sin\frac{n_{i}\pi}{M}\right)^{2}}{2\sigma^{2}}\right]e^{2\pi ik\mathcal{N}/M}\Bigg|_{\alpha=1}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\rho\left(E\right) & =\sum_{\left\{ n_{i}\right\} }\int\frac{d\theta}{2\pi}e^{i\left(E-\sum_{i}\sin\frac{n_{i}\pi}{M}\right)\theta}\mathcal{P}\sum_{i}\sin\frac{n_{i}\pi}{M}\\
+ & =\frac{d}{d\alpha}\sum_{\left\{ n_{i}\right\} }\int\frac{d\theta}{2\pi}\frac{i}{\theta}e^{i\left(E-\alpha\sum_{i}\sin\frac{n_{i}\pi}{M}\right)\theta}\mathcal{P}\Bigg|_{\alpha=1}\\
+ & =\frac{d}{d\alpha}\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\int\frac{d\theta}{2\pi}\frac{i}{\theta}\sum_{\left\{ n_{j}\right\} }\exp\left[i\left(E-\alpha\sum_{j}\sin\frac{n_{j}\pi}{M}\right)\theta+2\pi ik\sum_{j}n_{j}/M\right]\Bigg|_{\alpha=1}\\
+ & =\frac{d}{d\alpha}\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\int\frac{d\theta}{2\pi}\frac{i}{\theta}e^{iE\theta}\prod_{j=1}^{M-1}\left[1+\exp\left(-i\alpha\theta\sin\frac{n_{j}\pi}{M}+2\pi ikn_{j}/M\right)\right]\Bigg|_{\alpha=1}\\
+ & =\frac{d}{d\alpha}\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\int\frac{d\theta}{2\pi}\frac{i}{\theta}e^{iE\theta}\exp\left\{ \sum_{j=1}^{M-1}\ln\left[1+\exp\left(-i\alpha\theta\sin\frac{n_{j}\pi}{M}+2\pi ikn_{j}/M\right)\right]\right\} \Bigg|_{\alpha=1}\\
+ & =\frac{d}{d\alpha}\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\int\frac{d\theta}{2\pi}\frac{i}{\theta}e^{iE\theta}\exp\left(A\right)\Bigg|_{\alpha=1}
+\end{align*}
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\begin{align*}
+A & =\sum_{j=1}^{M-1}\ln\left[1+\exp\left(-i\alpha\theta\sin\frac{n_{j}\pi}{M}+2\pi ikn_{j}/M\right)\right]\\
+ & \approx M\int_{0}^{1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & =M\left(\int_{0}^{1/2}+\int_{1/2}^{1}\right)\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & =M\int_{0}^{1/2}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & +M\int_{-1/2}^{0}\ln\left(1+\exp\left(i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & =M\int_{0}^{1/2}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & +M\int_{0}^{1/2}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi-2\pi ikx\right)\right)dx\\
+ & =M\int_{0}^{1/2}\ln\left(1+\exp\left(-2i\alpha\theta\sin x\pi\right)+2\exp\left(-i\alpha\theta\sin x\pi\right)\cos2\pi kx\right)dx
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Thermodynamics
 \end_layout
 
@@ -1937,7 +2001,7 @@ Z\left(M,\beta\right)=\tr e^{-\beta\left(Mm+H\right)}.
  With the eigenvalue density distribution, we can write 
 \begin_inset Formula 
 \[
-Z\left(M,\beta\right)=\int_{0}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)}\rho\left(E\right)dE,
+Z\left(M,\beta\right)=\int_{-\infty}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)}\rho\left(E\right)dE,
 \]
 
 \end_inset
@@ -1961,9 +2025,39 @@ reference "eq:E_distr"
  into above, we find 
 \begin_inset Formula 
 \begin{align*}
-Z\left(M,\beta\right) & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{0}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}dE\\
- & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{0}^{\infty}e^{-\beta Mm-\frac{\left(E-\mu+\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}-\left(\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}+2\mu\frac{T_{0}}{m}\beta\sigma^{2}}{2\sigma^{2}}}dE\\
+Z\left(M,\beta\right) & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{-\infty}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}dE\\
+ & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{-\infty}^{\infty}e^{-\beta Mm-\frac{\left(E-\mu+\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}-\left(\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}+2\mu\frac{T_{0}}{m}\beta\sigma^{2}}{2\sigma^{2}}}dE\\
  & =2^{M}e^{-\beta Mm+\left(\frac{T_{0}}{m}\right)^{2}\beta^{2}\sigma^{2}-\frac{T_{0}}{m}\mu\beta}
+\end{align*}
+
+\end_inset
+
+ In the limit that 
+\begin_inset Formula $\xi=T_{0}\beta/m\gg1$
+\end_inset
+
+, the ground state dominate the contribution.
+ We therefore approximate the integrand near 
+\begin_inset Formula $E_{G}$
+\end_inset
+
+, 
+\begin_inset Formula 
+\begin{align*}
+\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}} & \approx\frac{\left(E_{G}-\mu\right)^{2}}{2\sigma^{2}}+2\frac{\left(E_{G}-\mu\right)}{2\sigma^{2}}\left(E-E_{G}\right)\\
+ & =\frac{\mu^{2}-E_{G}^{2}}{2\sigma^{2}}+\frac{\left(E_{G}-\mu\right)E}{\sigma^{2}}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+Z\left(M,\beta\right) & \approx\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{E_{G}}^{\infty}e^{-\beta Mm-\xi E-\frac{\mu^{2}-E_{G}^{2}}{2\sigma^{2}}-\frac{\left(E_{G}-\mu\right)E}{\sigma^{2}}}dE\\
+ & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}e^{-\beta Mm-\frac{\mu^{2}-E_{G}^{2}}{2\sigma^{2}}}\int_{E_{G}}^{\infty}\exp\left[\left(-\xi-\frac{E_{G}-\mu}{\sigma^{2}}\right)E\right]dE\\
+ & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\exp\left(-\beta Mm-\frac{\mu^{2}-E_{G}^{2}}{2\sigma^{2}}\right)\frac{1}{\left(\xi+\frac{E_{G}-\mu}{\sigma^{2}}\right)}\exp\left[\left(-\xi-\frac{E_{G}-\mu}{\sigma^{2}}\right)E_{G}\right]\\
+ & =\frac{2^{M}}{\sqrt{2\pi}\sigma\left(\xi+\frac{E_{G}-\mu}{\sigma^{2}}\right)}\exp\left[\left(-\xi-\frac{E_{G}-\mu}{\sigma^{2}}\right)E_{G}-\beta Mm-\frac{\mu^{2}-E_{G}^{2}}{2\sigma^{2}}\right]\\
+ & =
 \end{align*}
 
 \end_inset
