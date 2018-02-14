@@ -1949,6 +1949,89 @@ A & =\sum_{j=1}^{M-1}\ln\left[1+\exp\left(-i\alpha\theta\sin\frac{n_{j}\pi}{M}+2
 
 \end_layout
 
+\begin_layout Standard
+In the limit 
+\begin_inset Formula $E\to\infty$
+\end_inset
+
+, we can approximate 
+\begin_inset Formula $\rho\left(E\right)$
+\end_inset
+
+ be integrating near 
+\begin_inset Formula $\theta\approx0$
+\end_inset
+
+, 
+\begin_inset Formula 
+\begin{align*}
+A & \approx M\int_{0}^{1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & \approx M\int_{0}^{1}\ln\left(1+\exp\left(2\pi ikx\right)\left(1-i\alpha\theta\sin x\pi\right)\right)dx\\
+ & \approx M\int_{0}^{1}\ln\left(1+\exp\left(2\pi ikx\right)-i\alpha\theta\exp\left(2\pi ikx\right)\sin x\pi\right)dx
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+A^{*} & =M\int_{0}^{1}\ln\left(1+\exp\left(i\alpha\theta\sin x\pi-2\pi ikx\right)\right)dx\\
+ & =-M\int_{0}^{-1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & =M\int_{-1}^{0}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\Re A & =\frac{1}{2}\left(A+A^{*}\right)\\
+ & =M\int_{-1}^{1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+A & \approx M\int_{0}^{1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & =\frac{1}{2}A+\frac{1}{2}M\int_{0}^{-1}\ln\left(1+\exp\left(i\alpha\theta\sin x\pi-2\pi ikx\right)\right)dx
+\end{align*}
+
+\end_inset
+
+ Let 
+\begin_inset Formula $z=e^{2\pi ix}$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\[
+dz=2\pi ie^{2\pi ix}dx\Rightarrow dx=\frac{1}{2\pi i}\frac{dz}{z}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\sin\pi x=\frac{1}{2i}\left(\sqrt{z}-\frac{1}{\sqrt{z}}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+A & =M\int_{0}^{1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & =M\frac{1}{2\pi i}\ointctrclockwise_{\left|z\right|=1}\ln\left[1+z^{k}\exp\left(-\frac{\alpha\theta}{2}\frac{z-1}{\sqrt{z}}\right)\right]\frac{dz}{z}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Thermodynamics
 \end_layout
