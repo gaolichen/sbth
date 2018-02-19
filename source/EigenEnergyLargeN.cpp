@@ -486,7 +486,7 @@ void EigenEnergyLargeN::MergeEnergy(vector<double>& a, vector<double>& b, vector
     }
 }
 
-void EigenEnergyLargeN::CalculateByEigen(double invN, bool calcEigenvector)
+void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEigenvector)
 {
 	if (s != 1)
 	{
@@ -501,7 +501,13 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, bool calcEigenvector)
 	}
 	
 	// file1 to save eigenvalues. 
-	string file1 = "EE" + file + ".txt";
+	string file1 = "EE" + file;
+    if (buckets > 0)
+    {
+        file1 += "g";
+    }
+    file1 += ".txt";
+
 	// file2 to save eigenvectors.
 	string file2 = "ES" + file + ".txt";
 	
@@ -520,11 +526,29 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, bool calcEigenvector)
 	ofstream ofs1(file1.c_str());
 
 	double eps = 1e-6;
-		
-	for (int i = 0; i < values.rows(); i++)
-	{
-		ofs1 << Chop(values[pos[i]].real(), eps) << endl;
-	}
+
+    if (buckets <= 0)
+    {
+	    for (int i = 0; i < values.rows(); i++)
+	    {
+		    ofs1 << Chop(values[pos[i]].real(), eps) << endl;
+	    }
+    }
+    else
+    {
+        vector<double> energies(pos.size(), .0);
+        for (int i = 0; i < pos.size(); i++)
+        {
+            energies[i] = Chop(values[pos[i]].real(), eps);
+        }
+
+        double range = max(abs(energies[1]), abs(energies.back()));
+        vector<pair<double, int> > res = BucketEnergies(energies, buckets, range);
+		for (int i = 0; i < res.size(); i++)
+		{
+			ofs1 << res[i].first << ' ' << res[i].second << endl;
+		}
+    }
 
 	ofs1.close();
 

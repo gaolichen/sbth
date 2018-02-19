@@ -103,10 +103,13 @@ void GenerateStates(bool output)
         //cout << i << ": " << inst->NoHalfMode(i) << endl;
     }
 
-    cout << "average energy of each bit:" << endl;    
-    for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
+    if (output)
     {
-        cout << i << ": " << setprecision(10) << inst->AverageEnergy(i) << endl;
+        //cout << "average energy of each bit:" << endl;    
+        for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
+        {
+            cout << i << ": " << setprecision(10) << inst->AverageEnergy(i) << endl;
+        }
     }
 }
 
@@ -298,18 +301,18 @@ void CalculateAllEigenvalues(int bits, int buckets)
 {
     cout << "Calculating large N energies for bits=" << bits << " ..." << endl;
 	EigenEnergyLargeN ee(bits);
-	if (bits > 2)
-	{
-        ee.CalculateByDynamics();
-        ee.SaveEnergies(buckets);
-        //ee.SaveSingleEnergies(bits);
-        //ee.CalculateThermo();
-        //ee.CalcFluctuation(1.5);
-	}
-	else
-	{
-		ee.CalculateByEigen();
-	}
+    ee.CalculateByDynamics();
+    ee.SaveEnergies(buckets);
+    //ee.SaveSingleEnergies(bits);
+    //ee.CalculateThermo();
+    //ee.CalcFluctuation(1.5);
+}
+
+void CalculateAllEigenvaluesByEigen(int bits, int N, int buckets)
+{
+    cout << "Calculating large N energies for bits=" << bits << " ..." << endl;
+	EigenEnergyLargeN ee(bits);
+    ee.CalculateByEigen(1.0/N, buckets, false);
 }
 
 void SaveSingleEnergies(int minBit, int maxBit)
@@ -376,6 +379,16 @@ int main(int argc, char* argv[])
 		}
 
         SaveSingleEnergies(atoi(argv[2]), atoi(argv[3]));
+    }
+    else if (cmd == "-ebe")
+    {
+        if (argc < 5)
+        {
+            cout << "please input 3 integer parameters: M, N, and buckets." << endl;
+            return -1;
+        }
+
+        CalculateAllEigenvaluesByEigen(atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
     }
     
     cout << "Time: " << watch.Stop() << " seconds." << endl;

@@ -117,7 +117,9 @@ public:
 	// is of the form  EEs=1M=5.txt and the one for eigen states is of the form
 	// ESs=1M=5.txt. 
 	// invN: the value of 1/N, should be very small
-	void CalculateByEigen(double invN = DefaultInvN, bool calcEigenvector = true);
+    // buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
+    // calcEigenvector: true to calculate eigenvectors as well, otherwise only calculate eigenvalues.
+	void CalculateByEigen(double invN = DefaultInvN, int buckets = 0, bool calcEigenvector = true);
 
     // this function calculates all energies of single trace with bit number <= M and stores 
     // results in singleTraceEnergies.
