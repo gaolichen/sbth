@@ -514,7 +514,8 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEige
 	// calculate eigenvalues and eigenvectors.
 	H0Hamiltonian h0;
 	Eigen::MatrixXcd mat = h0.ToMatrixN(M, Boson, invN);
-	Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver(mat, calcEigenvector);
+	Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver;
+    solver.compute(mat, calcEigenvector);
 	Eigen::VectorXcd values = solver.eigenvalues();
 
 	// sort them by eigenvalues.

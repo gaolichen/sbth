@@ -30,7 +30,7 @@ private:
 
 	void BuildSingleOperatorStates(int remBit, int currBits, vector<int>& res);
 public:
-	const static int MAX_BIT_TO_GENERATE = 11;
+	const static int MAX_BIT_TO_GENERATE = 15;
 
 	StateGenerator();
 	~StateGenerator();
