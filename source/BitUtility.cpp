@@ -168,6 +168,15 @@ void Stopwatch::Start()
 	start = clock();
 }
 
+string Stopwatch::Now()
+{
+    time_t t = time(0);   // get time now
+    struct tm * now = localtime(&t);
+    char buf[80];
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", now);
+    return buf;
+}
+
 /// return how much time in second since last Start() function call
 double Stopwatch::Stop()
 {

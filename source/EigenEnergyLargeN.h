@@ -129,7 +129,11 @@ public:
 
 	void CalculateByDynamics();
 
-    void CalculateThermo();
+    // calculate thermodynamics of string bit.
+    // T0: the string tension.
+    // maxB: max value of beta, beta = 1/temperatur, the min value of beta is 0.0
+    // steps: how many data sets to calculate. The interval between two connective data sets is maxB/steps.
+    void CalculateThermo(double T0, double maxB, int steps = 100);
 
     void CalcFluctuation(double beta);
 

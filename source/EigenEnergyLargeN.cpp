@@ -1,4 +1,3 @@
-
 #include "EigenEnergyLargeN.h"
 #include "Hamiltonian.h"
 #include "BitUtility.h"
@@ -8,6 +7,14 @@
 #include <cstdlib>
 #include <iomanip>
 using namespace std;
+
+#define HIGH_PRECISION
+
+#ifdef HIGH_PRECISION
+typedef long double Db;
+#else
+typedef double Db;
+#endif
 
 void EigenEnergyLargeN::Partition(int n, int k, i64 mask)
 {
@@ -240,40 +247,39 @@ void EigenEnergyLargeN::BuildAllStates()
     //cout << "eigenenergies: " << allStates << endl;
 }
 
-void EigenEnergyLargeN::CalculateThermo()
+void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
 {
     double minB = .0;
-    double maxB = 2.0;
-    double delta = (maxB - minB) / 100;
+    double delta = (maxB - minB) / steps;
 
-    string file = "THs=" + ToString(s) + "M=" + ToString(M) + ".txt";
+    string file = "THs=" + ToString(s) + "M=" + ToString(M) + "T0=" + ToString(T0) + ".txt";
 	ofstream ofs(file.c_str());
 
     //ofs << "T Z Energy Entropy" << endl;
 
-    for (double beta = minB; beta <= maxB + 1e-8; beta += delta)
+    for (Db beta = minB; beta <= maxB + 1e-8; beta += delta)
     {
-        double Z = .0;
-        double E = .0;
+        Db Z = .0;
+        Db E = .0;
 
         for (int i = allStates.size() - 1; i >= 0; i--)
         {
-            double rho = exp(-beta * (allStates[i] + M)/sqrt(2));
+            Db rho = exp(-beta * (T0 * allStates[i] + M)/sqrt(2));
             Z += rho;
-            E += rho * allStates[i];
+            E += rho * (T0 * allStates[i] + M)/sqrt(2);
         }
 
         E /= Z;
 
-        double entropy = .0;
+        Db entropy = .0;
 
         for (int i = allStates.size() - 1; i >= 0; i--)
         {
-            double rho = exp(-beta * (allStates[i] + M)/sqrt(2)) / Z;
+            Db rho = exp(-beta * (T0 * allStates[i] + M)/sqrt(2)) / Z;
             entropy -= rho * log(rho);
         }
 
-        ofs << beta << " " << Z << " " << E << " " << entropy << endl;
+        ofs << beta << " " << log(Z) << " " << E << " " << entropy << endl;
     }
 
     ofs.close();

@@ -303,8 +303,6 @@ void CalculateAllEigenvalues(int bits, int buckets)
 	EigenEnergyLargeN ee(bits);
     ee.CalculateByDynamics();
     ee.SaveEnergies(buckets);
-    //ee.SaveSingleEnergies(bits);
-    //ee.CalculateThermo();
     //ee.CalcFluctuation(1.5);
 }
 
@@ -328,6 +326,14 @@ void SaveSingleEnergies(int minBit, int maxBit)
     }
 }
 
+void CalculateThermodynamics(int bits, double T0, double maxB, int steps = 100)
+{
+    cout << "Calculating thermodynamics for bits=" << bits << " ..." << endl;
+	EigenEnergyLargeN ee(bits);
+    ee.CalculateByDynamics();
+    ee.CalculateThermo(T0, maxB, steps);
+}
+
 int main(int argc, char* argv[])
 {
 	GenerateStates(false);    
@@ -348,6 +354,8 @@ int main(int argc, char* argv[])
 
     Stopwatch watch;
 	watch.Start();
+
+    cout << "Start computation at " << watch.Now() << endl;
 	string cmd = "";
 	if (argc > 1) cmd = argv[1];
 
@@ -382,6 +390,7 @@ int main(int argc, char* argv[])
     }
     else if (cmd == "-ebe")
     {
+        // calculate all eigen energies using the Eigen library.
         if (argc < 5)
         {
             cout << "please input 3 integer parameters: M, N, and buckets." << endl;
@@ -390,7 +399,18 @@ int main(int argc, char* argv[])
 
         CalculateAllEigenvaluesByEigen(atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
     }
+    else if (cmd == "-th")
+    {
+        // calculate thermodunamics.
+        if (argc < 5)
+        {
+            cout << "please input 3 integer parameters: M, T0, and maxBeta." << endl;
+            return -1;
+        }
+        CalculateThermodynamics(atoi(argv[2]), atof(argv[3]), atof(argv[4]));
+    }
     
-    cout << "Time: " << watch.Stop() << " seconds." << endl;
+    cout << "Finish computation at " << watch.Now() << endl;
+    cout << "Elapsed time: " << watch.Stop() << " seconds." << endl;
 	return 0;
 }

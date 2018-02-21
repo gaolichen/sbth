@@ -71,4 +71,5 @@ public:
 	Stopwatch();
 	void Start();
 	double Stop();
+    string Now();
 };
