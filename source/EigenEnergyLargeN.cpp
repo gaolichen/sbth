@@ -285,6 +285,89 @@ void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
     ofs.close();
 }
 
+void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, int steps)
+{
+    double minB = .0;
+    double delta = (maxB - minB) / steps;
+
+    // first, we need to find all the energies eigenvalues at finite N.
+    vector<double> energies;
+    energies.reserve(1<<(M+1));
+
+    H0Hamiltonian h0;
+    
+    for (int bit = 1; bit <= M; bit++)
+    {
+        if (bit > 8)
+        {
+            // load from file.
+            string input = "EEs=" + ToString(s) + "M=" + ToString(bit) + "N=" + ToString(M) + ".txt";
+            ifstream ifs(input.c_str());
+            double energy;
+            while (!ifs.eof())
+            {
+                double energy;
+                ifs >> energy;
+                // the energy is P_0 = (P_{+} + P_{-})/sqrt(2) and
+                // to be consistent with Thorn's paper, we shift P_{-} by 8*T0/PI * M
+                energies.push_back((T0 * (energy + 8 * bit /PI) + bit) / sqrt(2));
+            }
+
+            ifs.close();
+        }
+        else
+        {
+            // compute with eigen.
+            Eigen::MatrixXcd mat = h0.ToMatrixN(bit, Boson, 1.0/M);
+	        Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver;
+            solver.compute(mat, false);
+	        Eigen::VectorXcd values = solver.eigenvalues();
+
+            for (int i = 0; i < values.size(); i++)
+            {
+                // the energy is P_0 = (P_{+} + P_{-})/sqrt(2) and
+                // to be consistent with Thorn's paper, we shift P_{-} by 8*T0/PI * M
+                energies.push_back((T0 * (values[i].real() + 8 * bit /PI) + bit) / sqrt(2));
+            }
+        }
+    }
+
+    sort(energies.begin(), energies.end());
+
+    // then we calculate thermodynamics and save the results to file.
+    string file = "THs=" + ToString(s) + "N=" + ToString(M) + "T0=" + ToString(T0) + ".txt";
+	ofstream ofs(file.c_str());
+
+    //ofs << "T Z Energy Entropy" << endl;
+
+    for (Db beta = minB; beta <= maxB + 1e-8; beta += delta)
+    {
+        Db Z = .0;
+        Db E = .0;
+
+        for (int i = energies.size() - 1; i >= 0; i--)
+        {
+            Db rho = exp(-beta * energies[i]);
+            Z += rho;
+            E += rho * energies[i];
+        }
+
+        E /= Z;
+
+        Db entropy = .0;
+
+        for (int i = energies.size() - 1; i >= 0; i--)
+        {
+            Db rho = exp(-beta * energies[i]) / Z;
+            entropy -= rho * log(rho);
+        }
+
+        ofs << beta << " " << log(Z) << " " << E << " " << entropy << endl;
+    }
+
+    ofs.close();
+}
+
 void EigenEnergyLargeN::CalcFluctuation(double beta)
 {
     double maxT = 100.0;
