@@ -139,8 +139,9 @@ public:
     // the partition function Z is the sum of indidual Z of each M.
     // T0: the string tension.
     // maxB: max value of beta, beta = 1/temperatur, the min value of beta is 0.0
+    // datafolder: the path to the foler that contains energy eigenvalue data.
     // steps: how many data sets to calculate. The interval between two connective data sets is maxB/steps.
-    void CalculateThermoForN(double T0, double maxB, int steps = 100);
+    void CalculateThermoForN(double T0, double maxB, string datafolder, int steps = 100);
 
     void CalcFluctuation(double beta);
 

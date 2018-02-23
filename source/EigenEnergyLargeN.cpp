@@ -285,7 +285,7 @@ void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
     ofs.close();
 }
 
-void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, int steps)
+void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, string datafolder, int steps)
 {
     double minB = .0;
     double delta = (maxB - minB) / steps;
@@ -298,15 +298,23 @@ void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, int steps)
     
     for (int bit = 1; bit <= M; bit++)
     {
+        cout << "calculate energies for bit=" << bit << endl;
         if (bit > 8)
         {
             // load from file.
-            string input = "EEs=" + ToString(s) + "M=" + ToString(bit) + "N=" + ToString(M) + ".txt";
+            string input = datafolder + "/EEs=" + ToString(s) + "M=" + ToString(bit) + "N=" + ToString(M) + ".txt";
             ifstream ifs(input.c_str());
+
+            cout << "file: " << input << " " << (ifs.good() ? "good" : "fuck") << endl;
+
+            if (!ifs.good())
+            {
+                return;
+            }
+
             double energy;
             while (!ifs.eof())
             {
-                double energy;
                 ifs >> energy;
                 // the energy is P_0 = (P_{+} + P_{-})/sqrt(2) and
                 // to be consistent with Thorn's paper, we shift P_{-} by 8*T0/PI * M
@@ -333,6 +341,8 @@ void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, int steps)
     }
 
     sort(energies.begin(), energies.end());
+
+    cout << "Total number of energies states = " << energies.size() << endl;
 
     // then we calculate thermodynamics and save the results to file.
     string file = "THs=" + ToString(s) + "N=" + ToString(M) + "T0=" + ToString(T0) + ".txt";

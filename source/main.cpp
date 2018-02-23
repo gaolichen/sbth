@@ -334,11 +334,11 @@ void CalculateThermodynamics(int bits, double T0, double maxB, int steps = 100)
     ee.CalculateThermo(T0, maxB, steps);
 }
 
-void CalculateThermodynamicsForN(int N, double T0, double maxB, int steps = 100)
+void CalculateThermodynamicsForN(int N, double T0, double maxB, string datafolder, int steps = 1000)
 {
     cout << "Calculating thermodynamics for N=" << N << " ..." << endl;
 	EigenEnergyLargeN ee(N);
-    ee.CalculateThermoForN(T0, maxB, steps);
+    ee.CalculateThermoForN(T0, maxB, datafolder, steps);
 }
 
 int main(int argc, char* argv[])
@@ -419,13 +419,13 @@ int main(int argc, char* argv[])
     else if (cmd == "-thn")
     {
         // calculate thermodunamics for finite N.
-        if (argc < 5)
+        if (argc < 6)
         {
-            cout << "please input 3 integer parameters: N, T0, and maxBeta." << endl;
+            cout << "please input 3 integer parameters: N, T0, maxBeta, data folder" << endl;
             return -1;
         }
 
-        CalculateThermodynamicsForN(atoi(argv[2]), atof(argv[3]), atof(argv[4]));
+        CalculateThermodynamicsForN(atoi(argv[2]), atof(argv[3]), atof(argv[4]), argv[5]);
     }
     
     cout << "Finish computation at " << watch.Now() << endl;
