@@ -154,5 +154,7 @@ public:
     void SaveSingleEnergies(int bit, int buckets = 0);
 
 	const vector<pair<double, int> > Energies() { return energies; }
+
+    int SingleEnergySize(int bit) { return this->singleTraceEnergies[bit].size(); }
 };
 

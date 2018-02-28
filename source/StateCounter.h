@@ -50,8 +50,5 @@ public:
     double AverageEnergy(int bit);
 
 	~StateCounter(void);
-
-    // the test code of the class.
-    static void Test(int s);
 };
 

@@ -19,6 +19,7 @@
 #include "StateType.h"
 #include "EigenEnergyLargeN.h"
 #include "StateCounter.h"
+#include "Tests.h"
 
 using namespace std;
 
@@ -349,7 +350,11 @@ int main(int argc, char* argv[])
 	string cmd = "";
 	if (argc > 1) cmd = argv[1];
 
-	if (cmd == "-e")
+    if (cmd == "-t")
+    {
+        Tests::Run();
+    }
+    else if (cmd == "-e")
 	{
 		if (argc < 3)
 		{

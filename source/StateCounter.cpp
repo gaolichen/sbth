@@ -278,27 +278,3 @@ snum StateCounter::StateNumbers(int s, int bit, int remain, int b)
 	stateNumbers[s][bit][remain][b] = ret;
 	return ret;
 }
-
-void StateCounter::Test(int s)
-{
-    StateCounter* inst = StateCounter::Inst();
-
-    cout << "Number of states of spin-" << s << " system:" << endl;
-    cout << "M\tSingle-Trace\t\tMulti-Trace" << endl;
-    for (int i = 1; i * s <= StateCounter::MAX_BIT_TO_COUNT; i++)
-	{
-		cout << i << "\t" << inst->SingleTrace(i, s) << "\t\t" << inst->MultiTrace(i, s) << endl;
-	}
-
-    //cout << "statecounter" << endl;
-    for (int i = 2; i <= StateCounter::MAX_BIT_TO_COUNT; i+=2)
-    {
-        //cout << i << ": " << inst->NoHalfMode(i) << endl;
-    }
-
-    //cout << "average energy of each bit:" << endl;    
-    for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
-    {
-        //cout << i << ": " << setprecision(10) << inst->AverageEnergy(i) << endl;
-    }
-}
