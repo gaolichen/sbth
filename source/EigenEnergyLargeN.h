@@ -59,9 +59,9 @@ private:
 	// where each unit mean sin(k * Pi/M);
 	// bits: the nonzero bit position of bits represents a positive-contribution bit and zero 
 	// bit position represents a negative-contribution bit.
-	double CalcEnergy(vector<int>& nonZeroBits, int positiveBits);
+	//double CalcEnergy(vector<int>& nonZeroBits, int positiveBits);
 
-	void Partition(int n, int k, i64 mask);
+	//void Partition(int n, int k, i64 mask);
 
     // find all bosonic multi-trace energies built out of n number of b-bit single trace states.
     // store results in statesByBoson.
@@ -125,7 +125,7 @@ public:
     // results in singleTraceEnergies.
     void CalcAllSingleTraceEnergies();
 
-	void Calculate();
+//	void Calculate();
 
 	void CalculateByDynamics();
 

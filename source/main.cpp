@@ -84,33 +84,16 @@ void TestTraceState()
 void GenerateStates(bool output)
 {
 	StateGenerator generator;
-	for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
+	/*for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
 	{
 		if (output)
 		{
 			cout << i << "\t" << generator.SingleStateNumber(i) << "\t" << generator.BosonNumber(i) << endl;
 		}
-	}
+	}*/
 
 	generator.GenerateAllStates();
 	generator.InitStateCollection(StateCollection::Inst());
-
-    StateCounter* inst = StateCounter::Inst();
-
-    //cout << "statecounter" << endl;
-    for (int i = 2; i <= StateCounter::MAX_BIT_TO_COUNT; i+=2)
-    {
-        //cout << i << ": " << inst->NoHalfMode(i) << endl;
-    }
-
-    if (output)
-    {
-        //cout << "average energy of each bit:" << endl;    
-        for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
-        {
-            cout << i << ": " << setprecision(10) << inst->AverageEnergy(i) << endl;
-        }
-    }
 }
 
 void OutputHamiltonianMatrix(int bits)

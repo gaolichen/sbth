@@ -11,12 +11,12 @@ private:
     vector<vector<vector<snum> > > stateNumbers;
     vector<vector<snum> > oddOnlyStateNumbers;
     vector<vector<snum> > evenTraceNumbers;
-	vector<snum> singleTraceNumbers;
+	vector<vector<snum> > singleTraceNumbers;
     vector<double> aveESingle;
     vector<vector<long double> > aveE;
 	vector<snum> noHalfMode;
 
-	StateCounter(void);
+	StateCounter();
 	static StateCounter* inst;
 
 	void InitNoHalfMode();
@@ -31,6 +31,9 @@ private:
 public:
 
     const static int MAX_BIT_TO_COUNT = 62;
+
+    const static int MAX_SPIN_TO_COUNT = 4;
+
 	static StateCounter* Inst();
 
 	// function to initialize all data of the class.
@@ -40,12 +43,15 @@ public:
 	// A valid partition is M = n_1 + n_2 + ..., where 1 <= n_1 < n_2 < ... < M and n_k != M/2 for all k.
 	snum NoHalfMode(int M);
 
-    snum SingleTrace(int M);
+    snum SingleTrace(int M, int s = 1);
 
     snum MultiTrace(int M);
 
     double AverageEnergy(int bit);
 
 	~StateCounter(void);
+
+    // the test code of the class.
+    static void Test(bool output, int s = 1);
 };
 

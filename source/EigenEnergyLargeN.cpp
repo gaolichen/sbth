@@ -16,6 +16,7 @@ typedef long double Db;
 typedef double Db;
 #endif
 
+/*
 void EigenEnergyLargeN::Partition(int n, int k, i64 mask)
 {
 	if (n <= 0)
@@ -87,7 +88,7 @@ void EigenEnergyLargeN::Calculate()
 			}
 		}
 	}
-}
+}*/
 
 void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 {
