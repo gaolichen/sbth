@@ -100,25 +100,33 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 
     singleTraceEnergies.reserve(M + 1);
     singleTraceEnergies.push_back(vector<double>(1, 0.0));
+    i64 allOne = (i64)((1<<s) - 1);
 
     for (int bit = 1; bit <= M; bit++)
     {
+        int Mhalf = 0;
+        if ((s * (bit - 1)) % 2 == 1)
+        {
+            Mhalf = bit / 2;
+        }
+
         vector<double> v;
         v.reserve(StateCollection::Inst()->SingleTraceStateNumber(bit));
-        double e0 = -4 / tan(PI/(2 * bit));
+        double e0 = -4 / tan(PI/(2 * bit)) * s;
 
-	    for (i64 i = 0; i < ((i64)1<<bit); i+=2)
+	    for (i64 i = 0; i < ((i64)1<<(bit * s)); i += (1<<s))
 	    {
 		    double deltE = 0.0;
 		    int modes = 0;
-		    for (int j = 1; ((i64)1<<j) <= i; j++)
+		    for (int j = 1; ((i64)1<<(j*s)) <= i; j++)
 		    {
-			    if ((i & ((i64)1<<j)) == 0) continue;
-			    deltE += 8 * sin(j * PI/bit);
-			    modes += j;
+                i64 mask = i & (allOne << (j * s));
+			    if (mask == 0) continue;
+			    deltE += 8 * sin(j * PI/bit) * BitCount(mask);
+			    modes += j * BitCount(mask);
 		    }
 
-		    if ((bit % 2 == 1 && modes % bit == 0) || (bit % 2 ==0 && modes % bit == bit / 2))
+		    if ((modes + Mhalf) % bit == 0)
 		    {
 			    v.push_back(e0 + deltE);
 		    }
