@@ -8,7 +8,7 @@ using namespace std;
 class StateCounter
 {
 private:
-    vector<vector<vector<snum> > > stateNumbers;
+    vector<vector<vector<vector<snum> > > > stateNumbers;
     vector<vector<snum> > oddOnlyStateNumbers;
     vector<vector<snum> > evenTraceNumbers;
 	vector<vector<snum> > singleTraceNumbers;
@@ -21,7 +21,7 @@ private:
 
 	void InitNoHalfMode();
 
-    snum StateNumbers(int bit, int remain, int b);
+    snum StateNumbers(int s, int bit, int remain, int b);
     snum OddOnlyStateNumbers(int bit, int remain, int parity);
     snum EvenTraceNumber(int bit, int remain, int parity);
     long double AverageEnergy(int bit, int remain, int parity);
@@ -45,13 +45,13 @@ public:
 
     snum SingleTrace(int M, int s = 1);
 
-    snum MultiTrace(int M);
+    snum MultiTrace(int M, int s = 1);
 
     double AverageEnergy(int bit);
 
 	~StateCounter(void);
 
     // the test code of the class.
-    static void Test(bool output, int s = 1);
+    static void Test(int s);
 };
 

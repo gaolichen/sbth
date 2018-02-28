@@ -27,16 +27,22 @@ snum StateCounter::SingleTrace(int M, int s)
 {
     if (s * M > MAX_BIT_TO_COUNT)
     {
-        cout << "Exceed max bit number to count" << endl;
+        cout << "StateCounter::SingleTrace: Exceed max bit number to count" << endl;
         return -1;
     }
 
     return singleTraceNumbers[s][M];
 }
 
-snum StateCounter::MultiTrace(int M)
+snum StateCounter::MultiTrace(int M, int s)
 {
-    return StateNumbers(M, M, 0);
+    if (s * M > MAX_BIT_TO_COUNT)
+    {
+        cout << "StateCounter::MultiTrace: Exceed max bit number to count" << endl;
+        return -1;
+    }
+
+    return StateNumbers(s, M, M, 0) >> (s - 1);
 }
 
 void StateCounter::InitSingleTraceNumber()
@@ -85,8 +91,14 @@ snum StateCounter::NoHalfMode(int M)
 
 void StateCounter::Init()
 {
-    vector<vector<snum> > numbers = vector<vector<snum> >(MAX_BIT_TO_COUNT + 1, vector<snum>(2, (snum)(-1)));
-	stateNumbers.resize(MAX_BIT_TO_COUNT + 1, numbers);
+    // initialize all state numbers to be zero.
+    stateNumbers.resize(MAX_SPIN_TO_COUNT + 1);
+    for (int s = 1; s <= MAX_SPIN_TO_COUNT; s++)
+    {
+        vector<vector<snum> > numbers = vector<vector<snum> >(MAX_BIT_TO_COUNT / s + 1, vector<snum>(2, (snum)(-1)));
+	    stateNumbers[s].resize(MAX_BIT_TO_COUNT / s + 1, numbers);
+    }
+
     oddOnlyStateNumbers.resize(MAX_BIT_TO_COUNT / 2 + 1, vector<snum>(MAX_BIT_TO_COUNT + 1, (snum)(-1)));
     evenTraceNumbers.resize(MAX_BIT_TO_COUNT + 1, vector<snum>(MAX_BIT_TO_COUNT + 1, (snum)(-1)));
 
@@ -155,7 +167,7 @@ long double StateCounter::AverageEnergy(int bit, int remain, int parity)
 			snum n2 = BinomialCoefficient(SingleTrace(bit) - 1 + j, (i64)j);
             if (bit % 2 == 0)
             {
-                ret += (long double)aveESingle[bit/2] * n1 * n2 * (i + j) * StateNumbers(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
+                ret += (long double)aveESingle[bit/2] * n1 * n2 * (i + j) * StateNumbers(1, bit - 1, remain - (i+j) * bit, (parity + i) % 2);
             }
 
 			ret += n1 * n2 * AverageEnergy(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
@@ -185,7 +197,7 @@ snum StateCounter::EvenTraceNumber(int bit, int remain, int parity)
 			snum n2 = BinomialCoefficient(SingleTrace(bit) - 1 + j, (i64)j);
             if (bit % 2 == 0)
             {
-                ret += n1 * n2 * (i + j) * StateNumbers(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
+                ret += n1 * n2 * (i + j) * StateNumbers(1, bit - 1, remain - (i+j) * bit, (parity + i) % 2);
             }
 
 			ret += n1 * n2 * EvenTraceNumber(bit - 1, remain - (i+j) * bit, (parity + i) % 2);
@@ -235,7 +247,7 @@ snum StateCounter::OddOnlyStateNumbers(int bit, int remain, int parity)
 	return ret;
 }
 
-snum StateCounter::StateNumbers(int bit, int remain, int b)
+snum StateCounter::StateNumbers(int s, int bit, int remain, int b)
 {
 	if (bit == 0)
 	{
@@ -248,36 +260,34 @@ snum StateCounter::StateNumbers(int bit, int remain, int b)
 		return 0;
 	}
 
-	snum ret = stateNumbers[bit][remain][b];
+	snum ret = stateNumbers[s][bit][remain][b];
 	if (ret >= 0) return ret;
 	int a = remain / bit;
 
 	ret = 0;
 	for (int i = 0; i <= a; i++)
+    {
 		for (int j = 0; i + j <= a; j++)
 		{
-			//int n1 = BinomialCoefficient(singleFermions[bit].size(), i);
-			//int n2 = BinomialCoefficient(singleBosons[bit].size() - 1 + j, j);
-			snum n1 = BinomialCoefficient(SingleTrace(bit), (i64)i);
-			snum n2 = BinomialCoefficient(SingleTrace(bit) - 1 + j, (i64)j);
-			ret += n1 * n2 * StateNumbers(bit - 1, remain - (i+j) * bit, (b+i)%2);
+			snum n1 = BinomialCoefficient(SingleTrace(bit, s) << (s - 1), (i64)i);
+			snum n2 = BinomialCoefficient((SingleTrace(bit, s) << (s - 1)) - 1 + j, (i64)j);
+			ret += n1 * n2 * StateNumbers(s, bit - 1, remain - (i+j) * bit, (b+i)%2);
 		}
-		stateNumbers[bit][remain][b] = ret;
+    }
 
+	stateNumbers[s][bit][remain][b] = ret;
 	return ret;
 }
 
-void StateCounter::Test(bool output, int s)
+void StateCounter::Test(int s)
 {
     StateCounter* inst = StateCounter::Inst();
 
-    cout << "Number of single trace states of spin-" << s << " system:" << endl;
+    cout << "Number of states of spin-" << s << " system:" << endl;
+    cout << "M\tSingle-Trace\t\tMulti-Trace" << endl;
     for (int i = 1; i * s <= StateCounter::MAX_BIT_TO_COUNT; i++)
 	{
-		if (output)
-		{
-			cout << i << "\t" << inst->SingleTrace(i, s) << endl;
-		}
+		cout << i << "\t" << inst->SingleTrace(i, s) << "\t\t" << inst->MultiTrace(i, s) << endl;
 	}
 
     //cout << "statecounter" << endl;
@@ -286,13 +296,9 @@ void StateCounter::Test(bool output, int s)
         //cout << i << ": " << inst->NoHalfMode(i) << endl;
     }
 
-    if (output)
+    //cout << "average energy of each bit:" << endl;    
+    for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
     {
-        //cout << "average energy of each bit:" << endl;    
-        for (int i = 1; i <= StateCounter::MAX_BIT_TO_COUNT; i++)
-        {
-            //cout << i << ": " << setprecision(10) << inst->AverageEnergy(i) << endl;
-        }
+        //cout << i << ": " << setprecision(10) << inst->AverageEnergy(i) << endl;
     }
-
 }
