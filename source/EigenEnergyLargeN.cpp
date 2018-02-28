@@ -111,7 +111,7 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
         }
 
         vector<double> v;
-        v.reserve(StateCollection::Inst()->SingleTraceStateNumber(bit));
+        v.reserve(StateCollection::Inst()->SingleTraceStateNumber(bit, s));
         double e0 = -4 / tan(PI/(2 * bit)) * s;
 
 	    for (i64 i = 0; i < ((i64)1<<(bit * s)); i += (1<<s))
@@ -424,12 +424,6 @@ void EigenEnergyLargeN::CalcFluctuation(double beta)
 
 void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
 {
-    if (s != 1)
-	{
-		cout << "Error: s = " << s << ". SaveEnergies only support for the s=1 case.";
-		return;
-	}
-
     string file = "EEs=" + ToString(s) + "M=" + ToString(bit) + "s";
 
     if (buckets > 0) file += "g.txt";

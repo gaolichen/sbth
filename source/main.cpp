@@ -297,17 +297,13 @@ void CalculateAllEigenvaluesByEigen(int bits, int N, int buckets)
     ee.CalculateByEigen(1.0/N, buckets, false);
 }
 
-void SaveSingleEnergies(int minBit, int maxBit)
+void SaveSingleEnergies(int s, int M, int buckets = 0)
 {
-    cout << "Calculating large N single-trace energies for bits=" << maxBit << " ..." << endl;
-	EigenEnergyLargeN ee(maxBit);
+    cout << "Calculating large N single-trace energies for s= " << s << " bits=" << M << " ..." << endl;
+	EigenEnergyLargeN ee(M, s);
 
     ee.CalcAllSingleTraceEnergies();
-
-    for (int i = minBit; i <= maxBit; i++)
-    {
-        ee.SaveSingleEnergies(i, 101);
-    }
+    ee.SaveSingleEnergies(M, buckets);
 }
 
 void CalculateThermodynamics(int bits, double T0, double maxB, int steps = 100)
@@ -377,11 +373,11 @@ int main(int argc, char* argv[])
     {
         if (argc < 4)
 		{
-			cout << "need one more integer type  parameter. ";
+			cout << "need more integer  parameters: s M buckets";
 			return -1;
 		}
 
-        SaveSingleEnergies(atoi(argv[2]), atoi(argv[3]));
+        SaveSingleEnergies(atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
     }
     else if (cmd == "-ebe")
     {

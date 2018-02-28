@@ -50,14 +50,14 @@ const TraceState& StateCollection::GetState(const StateId& id) const
 	return stateList[id.BitNumber][id.Index];
 }
 
-snum StateCollection::StateNumber(int bits) const
+snum StateCollection::StateNumber(int bits, int s) const
 {
-	return counter->MultiTrace(bits);
+	return counter->MultiTrace(bits, s);
 }
 
-snum StateCollection::SingleTraceStateNumber(int bits) const
+snum StateCollection::SingleTraceStateNumber(int bits, int s) const
 {
-    return counter->SingleTrace(bits);
+    return counter->SingleTrace(bits, s);
 }
 
 const TraceState& StateCollection::GetBosonState(int bits, int index) const

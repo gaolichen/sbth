@@ -22,8 +22,8 @@ public:
 	void Init(int bits, vector<TraceState>& bosons, vector<TraceState> fermions);
 	StateId GetId(const TraceState& state) const;
 	const TraceState& GetState(const StateId& id) const;
-	snum StateNumber(int bits) const;
-    snum SingleTraceStateNumber(int bits) const;
+	snum StateNumber(int bits, int s = 1) const;
+    snum SingleTraceStateNumber(int bits, int s = 1) const;
 	const TraceState& GetBosonState(int bits, int index) const;
 	const TraceState& GetFermionState(int bits, int index) const;
 	const TraceState& GetState(int bits, int index, StateType type) const;
