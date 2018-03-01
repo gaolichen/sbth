@@ -373,7 +373,7 @@ int main(int argc, char* argv[])
     {
         if (argc < 4)
 		{
-			cout << "need more integer  parameters: s M buckets";
+			cout << "need more integer  parameters: s M buckets" << endl;
 			return -1;
 		}
 

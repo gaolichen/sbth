@@ -134,6 +134,7 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 
         //cout << "bit = " << bit << ", state number = " << v.size() << ", expected = " << StateCollection::Inst()->SingleTraceStateNumber(bit) << endl;
 
+        sort(v.begin(), v.end());
         singleTraceEnergies.push_back(v);
     }
 }
