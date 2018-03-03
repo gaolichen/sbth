@@ -1,7 +1,6 @@
 #include "Tests.h"
 #include <iomanip>
 
-
 Tests::Tests(int s)
 {
     this->s = s;
@@ -11,10 +10,28 @@ void Tests::DemoStateNumber()
 {
     StateCounter* inst = StateCounter::Inst();
     cout << "Number of states of spin-" << s << " system:" << endl;
-    cout << "M\tSingle-Trace\t\tMulti-Trace" << endl;
+    cout.width(6);
+    cout << right << "M" << " ";
+    cout.width(22);
+    cout << right << "SingleTrace" << " ";
+    cout.width(15);
+    cout << right << "ration1" << " ";
+    cout.width(22);
+    cout << right << "MultiTrace" << " ";
+    cout.width(15);
+    cout << right << "ratio2" << endl;
     for (int i = 1; i * s <= StateCounter::MAX_BIT_TO_COUNT; i++)
 	{
-		cout << i << "\t" << inst->SingleTrace(i, s) << "\t\t" << inst->MultiTrace(i, s) << endl;
+        cout.width(6);
+		cout << right << i << " ";
+        cout.width(22);
+        cout << right << inst->SingleTrace(i, s) << " ";
+        cout.width(15);
+        cout << setprecision(10) << right << inst->SingleTrace(i, s) / (long double)((i64)1<<(s * i)) * i << " ";
+        cout.width(22);
+        cout << right << inst->MultiTrace(i, s) << " ";
+        cout.width(15);
+        cout << setprecision(10) << right << inst->MultiTrace(i, s) / (long double)((i64)1<<(s * i)) << endl;
 	}
 }
 
@@ -61,12 +78,5 @@ void Tests::DemoAverageEnergy()
 void Tests::Run()
 {
     Tests test1(1);
-    Tests test2(2);
-    Tests test3(3);
-
-    test1.DemoStateNumber();
-    test2.DemoStateNumber();
-    test3.DemoStateNumber();
-
     test1.SingleTraceEnergies(7);
 }

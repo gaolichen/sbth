@@ -32,7 +32,7 @@ public:
 
     const static int MAX_BIT_TO_COUNT = 62;
 
-    const static int MAX_SPIN_TO_COUNT = 4;
+    const static int MAX_SPIN_TO_COUNT = 10;
 
 	static StateCounter* Inst();
 

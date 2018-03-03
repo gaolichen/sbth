@@ -350,6 +350,19 @@ int main(int argc, char* argv[])
     {
         Tests::Run();
     }
+    else if (cmd == "-sn")
+    {
+        if (argc < 3)
+		{
+			cout << "need one more integer type  parameter." << endl;
+            cout << "Usage: sbth -sn s" << endl;
+            cout << "Example: sbth -sn 3" << endl;
+			return -1;
+		}
+
+        Tests test(atoi(argv[2]));
+        test.DemoStateNumber();
+    }
     else if (cmd == "-e")
 	{
 		if (argc < 3)
