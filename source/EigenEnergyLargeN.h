@@ -9,6 +9,36 @@ using namespace std;
 
 #define DefaultInvN EPS
 
+struct DegEnergy
+{
+    double E;
+    int Deg;
+
+    DegEnergy()
+    {
+    }
+
+    DegEnergy(double e)
+    {
+        this->E = e;
+        this->Deg = 1;
+    }
+
+    DegEnergy(double e, double degenerate)
+    {
+        this->E = e;
+        this->Deg = degenerate;
+    }
+};
+
+//#define DEG_ENERGY_TYPE
+
+#ifdef DEG_ENERGY_TYPE
+typedef DegEnergy TE;
+#else
+typedef double TE;
+#endif
+
 // struct provides comparision function for sorting eigenstates.
 struct EigenvalueLess
 {
@@ -33,25 +63,25 @@ private:
 
     // single trace eigen energies.
     // singleTraceEnergies[b][i]: the i-th eigenenergy of b-bit single trace eigenstate.
-    vector<vector<double> > singleTraceEnergies;
+    vector<vector<TE> > singleTraceEnergies;
     
     // states built by bosonic single trace states.
     // statesByBoson[k, b]: eigenenergies built out of k number of b-bit bosonic single trace state.
-    vector<vector<vector<double> > > statesByBoson;
+    vector<vector<vector<TE> > > statesByBoson;
 
     // states built by fermionic single trace states.
     // statesByFermion[k, b]: eigenenergies built out of k number of b-bit fermionic single trace state.
-    vector<vector<vector<double> > > statesByFermion;
+    vector<vector<vector<TE> > > statesByFermion;
 
     // statesByBoth[k, b]: eigenenergies built out of k number of b-bit single trace state.
-    vector<vector<vector<double> > > statesByBoth;
+    vector<vector<vector<TE> > > statesByBoth;
 
     // all M-bit bosonic eigenenergies.
-    vector<double> allStates;
+    vector<TE> allStates;
 
 	// list of eigen energies: for each element, the first component is the value of energy, 
 	// and the second component is the degeneracy of the enerties.
-	vector<pair<double, int> > energies;
+	//vector<DegEnergy> energies;
 	
 	// calculate energy from two numbers.
 	// nonZeroBits: the nonzero bit position of mask represents a nonzero mode, the mode can make 
@@ -100,7 +130,7 @@ private:
     // states: the energy eigenvalues to divide
     // buckets: number of buckets
     // range: all eigenvalues lie in the interval (-range, range).
-    static vector<pair<double, int> > BucketEnergies(vector<double>& states, int buckets, double range);
+    static vector<DegEnergy> BucketEnergies(vector<double>& states, int buckets, double range);
 
 public:
 	// constructor.
@@ -152,8 +182,6 @@ public:
     // save single-trace eigen energies to file.
     // buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
     void SaveSingleEnergies(int bit, int buckets = 0);
-
-	const vector<pair<double, int> > Energies() { return energies; }
 
     int SingleEnergySize(int bit) { return this->singleTraceEnergies[bit].size(); }
 };

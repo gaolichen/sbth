@@ -442,23 +442,23 @@ void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
     else
     {
         double range = 4.0 * s /tan(PI/(2 * bit));
-		vector<pair<double, int> > res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
+		vector<DegEnergy> res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
 		for (int i = 0; i < res.size(); i++)
 		{
-			ofs << res[i].first << ' ' << res[i].second << endl;
+			ofs << res[i].E << ' ' << res[i].Deg << endl;
 		}
     }
 
     ofs.close();
 }
 
-vector<pair<double, int> > EigenEnergyLargeN::BucketEnergies(vector<double>& states, int buckets, double range)
+vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<double>& states, int buckets, double range)
 {
     double delta = range * 2 / buckets;
-	vector<pair<double, int> > res;
+	vector<DegEnergy> res;
 	for (int i = 0; i < buckets; i++)
 	{
-		res.push_back(make_pair(-range + delta * (i + .5), 0));
+		res.push_back(DegEnergy(-range + delta * (i + .5), 0));
 	}
 
 	for (int i = 0; i < states.size(); i++)
@@ -466,7 +466,7 @@ vector<pair<double, int> > EigenEnergyLargeN::BucketEnergies(vector<double>& sta
 		int pos = (int)floor((states[i] + range) / delta);
 		if (pos == -1) pos = 0;
 		if (pos == buckets) pos = buckets - 1;
-		res[pos].second++; 
+		res[pos].Deg++; 
 	}
 
     return res;
@@ -495,10 +495,10 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 	else
 	{
 		double range = 4.0 * s /tan(PI/(2 * M));
-		vector<pair<double, int> > res = BucketEnergies(this->allStates, buckets, range);
+		vector<DegEnergy> res = BucketEnergies(this->allStates, buckets, range);
 		for (int i = 0; i < res.size(); i++)
 		{
-			ofs << res[i].first << ' ' << res[i].second << endl;
+			ofs << res[i].E << ' ' << res[i].Deg << endl;
 		}
 	}
 
@@ -647,10 +647,10 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEige
         }
 
         double range = max(abs(energies[1]), abs(energies.back()));
-        vector<pair<double, int> > res = BucketEnergies(energies, buckets, range);
+        vector<DegEnergy> res = BucketEnergies(energies, buckets, range);
 		for (int i = 0; i < res.size(); i++)
 		{
-			ofs1 << res[i].first << ' ' << res[i].second << endl;
+			ofs1 << res[i].E << ' ' << res[i].Deg << endl;
 		}
     }
 
