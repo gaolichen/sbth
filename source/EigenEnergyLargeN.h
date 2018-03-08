@@ -166,6 +166,8 @@ private:
 
     static i64 TotalSize(vector<TE>& v);
 
+    static int EstimateStatesNumber(int s, int M);
+
 public:
 	// constructor.
 	// bits: number of bits of the stringbit system, i.e, the M in the paper
@@ -217,6 +219,8 @@ public:
     // buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
     void SaveSingleEnergies(int bit, int buckets = 0);
 
-    int SingleEnergySize(int bit) { return this->singleTraceEnergies[bit].size(); }
+    int SingleEnergySize(int bit) { return TotalSize(this->singleTraceEnergies[bit]); }
+    
+    int MultiEnergySize() { return TotalSize(this->allStates); }
 };
 

@@ -276,15 +276,32 @@ void EigenEnergyLargeN::CalculateByDynamics()
     BuildAllStates();
 }
 
+int EigenEnergyLargeN::EstimateStatesNumber(int s, int M)
+{
+    // The following fits are obtained by LibreOffice Calc
+    switch (s)
+    {
+        case 1:
+            return (int)floor(pow(2, 0.86 * M - 0.5) + 1);
+        case 2:
+            return (int)floor(pow(2, 1.26 * M - 1) + 1);
+        case 3:
+            return (int)floor(pow(2, 1.5071 * M - 1.49) + 1);
+        case 4:
+            return (int)floor(pow(2, 1.662 * M -1.431) + 1);
+        case 5:
+            return (int)floor(pow(2, 1.765 * M -1.521) + 1);
+        default:
+            return (int)floor(pow(2, 2.1 * M - 1.5 * M /s -1.5));
+    }
+}
+
 void EigenEnergyLargeN::BuildAllStates()
 {
     // To avoid allocating too much memory, we estimate the size
     // of the allStates vector. The estimation was obtained by fitting 
     // the run results data. 
-    // By excel, we obtain the size can be approximated by
-    // size = 2^[2.09122*M-1.699*M/s-const], here we choose
-    // size = 2^[2.1*M-1.5*M/s - 1] 
-    int cap = (int)floor(pow(2, 2.1 * M - 1.5 * M /s) - 1); 
+    int cap = EstimateStatesNumber(s, M);
     allStates.reserve(cap);
     BuildAllStatesRec(M, M, .0, 0);
     sort(allStates.begin(), allStates.end());

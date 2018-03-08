@@ -16,6 +16,8 @@ public:
     // test functions
     void SingleTraceEnergies(int M);
 
+    void MultiTraceEigenEnergies(int maxM);
+
     // demo functions
     void DemoStateNumber();
 

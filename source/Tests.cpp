@@ -59,6 +59,25 @@ void Tests::SingleTraceEnergies(int M)
     cout << "Test::SingleTraceEnergies passed." << endl;
 }
 
+void Tests::MultiTraceEigenEnergies(int maxM)
+{
+    StateCounter* inst = StateCounter::Inst();
+    for (int bit = 1; bit <= maxM; bit++)
+    {
+        EigenEnergyLargeN calc(bit, s);
+        calc.CalculateByDynamics();
+
+        if (calc.MultiEnergySize() != inst->MultiTrace(bit, s))
+        {
+            cout << "MultiTraceEigenEnergies failed for s=" << s << ", M=" << bit << ": ";
+            cout << "\t returned " << calc.MultiEnergySize() << ", expected " << inst->MultiTrace(bit, s) << endl;
+            return;
+        }
+    }
+
+    cout << "Test::MultiTraceEigenEnergies passed for s=" << s << ", maxM=" << maxM << endl;
+}
+
 void Tests::DemoAverageEnergy()
 {
     StateCounter* inst = StateCounter::Inst();
@@ -79,4 +98,11 @@ void Tests::Run()
 {
     Tests test1(1);
     test1.SingleTraceEnergies(7);
+    test1.MultiTraceEigenEnergies(11);
+
+    Tests test2(2);
+    test2.MultiTraceEigenEnergies(8);
+
+    Tests test3(3);
+    test3.MultiTraceEigenEnergies(6);
 }
