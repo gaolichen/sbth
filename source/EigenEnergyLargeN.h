@@ -107,20 +107,6 @@ private:
     // all M-bit bosonic eigenenergies.
     vector<TE> allStates;
 
-	// list of eigen energies: for each element, the first component is the value of energy, 
-	// and the second component is the degeneracy of the enerties.
-	//vector<DegEnergy> energies;
-	
-	// calculate energy from two numbers.
-	// nonZeroBits: the nonzero bit position of mask represents a nonzero mode, the mode can make 
-	// either one unit position contribution or one unit negative contribution to the energy, 
-	// where each unit mean sin(k * Pi/M);
-	// bits: the nonzero bit position of bits represents a positive-contribution bit and zero 
-	// bit position represents a negative-contribution bit.
-	//double CalcEnergy(vector<int>& nonZeroBits, int positiveBits);
-
-	//void Partition(int n, int k, i64 mask);
-
     // find all bosonic multi-trace energies built out of n number of b-bit single trace states.
     // store results in statesByBoson.
     void BuildBosonicMultiTraceEnergies(int b, int n);
@@ -190,8 +176,6 @@ public:
     // this function calculates all energies of single trace with bit number <= M and stores 
     // results in singleTraceEnergies.
     void CalcAllSingleTraceEnergies();
-
-//	void Calculate();
 
 	void CalculateByDynamics();
 

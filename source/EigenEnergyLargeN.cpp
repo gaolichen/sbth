@@ -16,80 +16,6 @@ typedef long double Db;
 typedef double Db;
 #endif
 
-/*
-void EigenEnergyLargeN::Partition(int n, int k, i64 mask)
-{
-	if (n <= 0)
-	{
-		// finish a partition, calculate the energies.
-	        masks.push_back(mask);
-		return;
-	}
-
-	if (n > k * (k + 1) / 2)
-	{
-		// n is too large to partition for the remaining k integers.
-		return;
-	};
-	
-	if (k == 0)
-	{
-		// should not reach here...
-		return;
-	}
-
-	if (n >= k)
-	{
-		Partition(n - k, k - 1, mask | (1<<k));
-	}
-	
-	Partition(n, k - 1, mask);
-}
-
-// TODO:
-double EigenEnergyLargeN::CalcEnergy(vector<int>& modes, int positiveBits)
-{
-	double ret = .0;
-	for (int i = 0; i < M/2; i++)
-	{
-		if (IsBitSet(positiveBits, i)) ret += sin((i+1) * PI / M);
-		else ret -= sin((i+1) * PI / M);
-	}
-
-	return ret;
-}
-
-void EigenEnergyLargeN::Calculate()
-{
-	int M2 = M / 2;
-	int half = 0;
-	if (M % 2 == 0) half = M2;
-	for (int n = 0; n * M + half <= M2 * (1 + M2) / 2; n++)
-	{
-		Partition(n * M + half, M2, (i64)0);
-	}
-
-	for (int i = 0; i < masks.size(); i++)
-	{
-		int zeroBits = BitCount(masks[i]);
-		int nonZeroBits = (M2 - 1) / 2 - zeroBits;
-		int nonZeroMask = ((1 << M2) - 1) ^ masks[i];
-		vector<int> nonZeroDigits = Num2Digit(nonZeroMask, M2);
-
-		for (int j = 0; j < (1 << nonZeroBits); j++)
-		{
-			if (M % 2 == 0 && (masks[i] & (1<<M2)) != 0)
-			{
-				energies.push_back(make_pair(CalcEnergy(nonZeroDigits, j), 1 << (zeroBits - 1)));
-			}
-			else 
-			{
-				energies.push_back(make_pair(CalcEnergy(nonZeroDigits, j), 1 << zeroBits));
-			}
-		}
-	}
-}*/
-
 void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 {
     // if already calculated, return.
@@ -322,6 +248,139 @@ void EigenEnergyLargeN::BuildAllStates()
     }
 }
 
+void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, TE energy, int deg)
+{
+    if (bitRemain == 0 || singleTraceBits == 1)
+    {
+        int n = (1 << (deg - 1));
+        if (bitRemain > 0) n = (1 << deg);
+        TE toAdd;
+        if (bitRemain == 0)
+        {
+            toAdd = energy;
+        }
+        else if (bitRemain == 1)
+        {
+            toAdd = energy.Times(singleTraceEnergies[1][0]);
+        }
+        else
+        {
+            toAdd = energy.Times(statesByBoth[bitRemain][1][0]);
+        }
+
+        allStates.push_back(TE(toAdd.E, toAdd.Deg * n));
+        return;
+    }
+
+    if (singleTraceBits == 0)
+    {
+        cout << "BuildAllStatesRec should not reach here!!!!!!!!!!!!!!!!!" << endl;
+        return;
+    }
+
+    if (singleTraceBits > bitRemain)
+    {
+        BuildAllStatesRec(bitRemain, bitRemain, energy, deg);
+        return;
+    }
+
+    // skip this single trace
+    BuildAllStatesRec(bitRemain, singleTraceBits - 1, energy, deg);
+
+    // pick one single trace.
+    for (int i = 0; i < singleTraceEnergies[singleTraceBits].size(); i++)
+    {
+        BuildAllStatesRec(bitRemain - singleTraceBits, singleTraceBits - 1, 
+            energy.Times(singleTraceEnergies[singleTraceBits][i]), deg + 1);
+    }
+
+    // pick two of more.
+    for (int i = 2; i * singleTraceBits <= bitRemain; i++)
+    {
+        for (int j = 0; j < statesByBoth[i][singleTraceBits].size(); j++)
+        {
+            BuildAllStatesRec(bitRemain - singleTraceBits * i, singleTraceBits - 1, 
+                energy.Times(statesByBoth[i][singleTraceBits][j]), deg + 1);
+        }
+    }
+}
+
+void EigenEnergyLargeN::BuildStatesByBoth()
+{
+    statesByBoth.reserve(M + 1);
+    statesByBoth.push_back(vector<vector<TE> >());
+    statesByBoth.push_back(vector<vector<TE> >());
+    
+    for (int i = 2; i <= M; i++)
+    {
+        statesByBoth.push_back(vector<vector<TE> > (M/i + 1, vector<TE>()));
+        for (int bit = 1; bit * i <= M; bit++)
+        {
+            vector<TE>& v = statesByBoth[i][bit];
+			int size = 0;
+
+			// go through first round to calculate number of states.
+            for (int k = 0; k <= i; k += 2)
+            {
+				size += statesByFermion[k][bit].size() * statesByBoson[i - k][bit].size();
+            }
+
+			v.reserve(size);
+			// second round to add states
+			for (int k = 0; k <= i; k += 2)
+            {
+                if (statesByFermion[k][bit].size() > 0)
+                {
+                    MergeEnergy(statesByFermion[k][bit], statesByBoson[i - k][bit], v);
+                }
+            }
+
+            sort(v.begin(), v.end());
+            Collect(v);
+//            cout << "statesByBoth(" << i << ", " << bit << "): " << TotalSize(statesByBoth[i][bit]) << endl;
+        }
+    }
+}
+
+i64 EigenEnergyLargeN::TotalSize(vector<TE>& v)
+{
+    i64 tot = 0;
+    for (int i = 0; i < v.size(); i++)
+    {
+        tot += v[i].Deg;
+    }
+    return tot;
+}
+
+void EigenEnergyLargeN::Collect(vector<TE>& v)
+{
+    int saved = 0;
+    for (int i = 1; i < v.size(); i++)
+    {
+        if (v[i].E - v[saved].E < EPS)
+        {
+            v[saved].Deg += v[i].Deg;
+        }
+        else
+        {
+            v[++saved] = v[i];
+        }
+    }
+
+    v.resize(saved + 1);
+}
+
+void EigenEnergyLargeN::MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res)
+{
+    for (int i = 0; i < a.size(); i++)
+    {
+        for (int j = 0; j < b.size(); j++)
+        {
+            res.push_back(a[i].Times(b[j]));
+        }
+    }
+}
+
 void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
 {
     double minB = .0;
@@ -488,41 +547,6 @@ void EigenEnergyLargeN::CalcFluctuation(double beta)
     ofs.close();
 }
 
-void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
-{
-    string file = "EEs=" + ToString(s) + "M=" + ToString(bit) + "s";
-
-    if (buckets > 0) file += "g.txt";
-	else file += ".txt";
-
-    int tot = 0;
-
-	ofstream ofs(file.c_str());
-
-    if (buckets <= 0)
-    {
-        for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
-	    {
-            tot += singleTraceEnergies[bit][i].Deg;
-		    ofs << singleTraceEnergies[bit][i].E << ' ' << singleTraceEnergies[bit][i].Deg << endl;
-	    }
-    }
-    else
-    {
-        double range = 4.0 * s /tan(PI/(2 * bit));
-		vector<DegEnergy> res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
-		for (int i = 0; i < res.size(); i++)
-		{
-            tot += res[i].Deg;
-			ofs << res[i].E << ' ' << res[i].Deg << endl;
-		}
-    }
-
-    cout << "Total sates: " << tot << ", expected: " << StateCollection::Inst()->SingleTraceStateNumber(bit, s) << endl;
-
-    ofs.close();
-}
-
 vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<TE>& states, int buckets, double range)
 {
     double delta = range * 2 / buckets;
@@ -563,6 +587,41 @@ vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<double>& states, int 
     return res;
 }
 
+void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
+{
+    string file = "EEs=" + ToString(s) + "M=" + ToString(bit) + "s";
+
+    if (buckets > 0) file += "g.txt";
+	else file += ".txt";
+
+    int tot = 0;
+
+	ofstream ofs(file.c_str());
+
+    if (buckets <= 0)
+    {
+        for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
+	    {
+            tot += singleTraceEnergies[bit][i].Deg;
+		    ofs << singleTraceEnergies[bit][i].E << ' ' << singleTraceEnergies[bit][i].Deg << endl;
+	    }
+    }
+    else
+    {
+        double range = 4.0 * s /tan(PI/(2 * bit));
+		vector<DegEnergy> res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
+		for (int i = 0; i < res.size(); i++)
+		{
+            tot += res[i].Deg;
+			ofs << res[i].E << ' ' << res[i].Deg << endl;
+		}
+    }
+
+    cout << "Total sates: " << tot << ", expected: " << StateCollection::Inst()->SingleTraceStateNumber(bit, s) << endl;
+
+    ofs.close();
+}
+
 void EigenEnergyLargeN::SaveEnergies(int buckets)
 {
 	string file = "EEs=" + ToString(s) + "M=" + ToString(M);
@@ -590,139 +649,6 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 	ofs.close();
 }
 
-
-void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, TE energy, int deg)
-{
-    if (bitRemain == 0 || singleTraceBits == 1)
-    {
-        int n = (1 << (deg - 1));
-        if (bitRemain > 0) n = (1 << deg);
-        TE toAdd;
-        if (bitRemain == 0)
-        {
-            toAdd = energy;
-        }
-        else if (bitRemain == 1)
-        {
-            toAdd = energy.Times(singleTraceEnergies[1][0]);
-        }
-        else
-        {
-            toAdd = energy.Times(statesByBoth[bitRemain][1][0]);
-        }
-
-        allStates.push_back(TE(toAdd.E, toAdd.Deg * n));
-        return;
-    }
-
-    if (singleTraceBits == 0)
-    {
-        cout << "BuildAllStatesRec should not reach here!!!!!!!!!!!!!!!!!" << endl;
-        return;
-    }
-
-    if (singleTraceBits > bitRemain)
-    {
-        BuildAllStatesRec(bitRemain, bitRemain, energy, deg);
-        return;
-    }
-
-    // skip this single trace
-    BuildAllStatesRec(bitRemain, singleTraceBits - 1, energy, deg);
-
-    // pick one single trace.
-    for (int i = 0; i < singleTraceEnergies[singleTraceBits].size(); i++)
-    {
-        BuildAllStatesRec(bitRemain - singleTraceBits, singleTraceBits - 1, 
-            energy.Times(singleTraceEnergies[singleTraceBits][i]), deg + 1);
-    }
-
-    // pick two of more.
-    for (int i = 2; i * singleTraceBits <= bitRemain; i++)
-    {
-        for (int j = 0; j < statesByBoth[i][singleTraceBits].size(); j++)
-        {
-            BuildAllStatesRec(bitRemain - singleTraceBits * i, singleTraceBits - 1, 
-                energy.Times(statesByBoth[i][singleTraceBits][j]), deg + 1);
-        }
-    }
-}
-
-void EigenEnergyLargeN::BuildStatesByBoth()
-{
-    statesByBoth.reserve(M + 1);
-    statesByBoth.push_back(vector<vector<TE> >());
-    statesByBoth.push_back(vector<vector<TE> >());
-    
-    for (int i = 2; i <= M; i++)
-    {
-        statesByBoth.push_back(vector<vector<TE> > (M/i + 1, vector<TE>()));
-        for (int bit = 1; bit * i <= M; bit++)
-        {
-            vector<TE>& v = statesByBoth[i][bit];
-			int size = 0;
-
-			// go through first round to calculate number of states.
-            for (int k = 0; k <= i; k += 2)
-            {
-				size += statesByFermion[k][bit].size() * statesByBoson[i - k][bit].size();
-            }
-
-			v.reserve(size);
-			// second round to add states
-			for (int k = 0; k <= i; k += 2)
-            {
-                if (statesByFermion[k][bit].size() > 0)
-                {
-                    MergeEnergy(statesByFermion[k][bit], statesByBoson[i - k][bit], v);
-                }
-            }
-
-            sort(v.begin(), v.end());
-            Collect(v);
-//            cout << "statesByBoth(" << i << ", " << bit << "): " << TotalSize(statesByBoth[i][bit]) << endl;
-        }
-    }
-}
-
-i64 EigenEnergyLargeN::TotalSize(vector<TE>& v)
-{
-    i64 tot = 0;
-    for (int i = 0; i < v.size(); i++)
-    {
-        tot += v[i].Deg;
-    }
-    return tot;
-}
-
-void EigenEnergyLargeN::Collect(vector<TE>& v)
-{
-    int saved = 0;
-    for (int i = 1; i < v.size(); i++)
-    {
-        if (v[i].E - v[saved].E < EPS)
-        {
-            v[saved].Deg += v[i].Deg;
-        }
-        else
-        {
-            v[++saved] = v[i];
-        }
-    }
-
-    v.resize(saved + 1);
-}
-
-void EigenEnergyLargeN::MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res)
-{
-    for (int i = 0; i < a.size(); i++)
-    {
-        for (int j = 0; j < b.size(); j++)
-        {
-            res.push_back(a[i].Times(b[j]));
-        }
-    }
-}
 
 void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEigenvector)
 {
