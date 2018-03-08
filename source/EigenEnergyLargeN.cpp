@@ -99,7 +99,7 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
     }
 
     singleTraceEnergies.reserve(M + 1);
-    singleTraceEnergies.push_back(vector<double>(1, 0.0));
+    singleTraceEnergies.push_back(vector<TE>(1, 0.0));
     i64 allOne = (i64)((1<<s) - 1);
 
     for (int bit = 1; bit <= M; bit++)
@@ -132,74 +132,102 @@ void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 		    }
 	    }
 
-        //cout << "bit = " << bit << ", state number = " << v.size() << ", expected = " << StateCollection::Inst()->SingleTraceStateNumber(bit) << endl;
-
         sort(v.begin(), v.end());
+
+#ifndef DEG_ENERGY_TYPE
         singleTraceEnergies.push_back(v);
+        //cout << "bit = " << bit << ", state number = " << v.size() << ", expected = " << StateCollection::Inst()->SingleTraceStateNumber(bit, s) << endl;
+#else
+        // group energies.
+        singleTraceEnergies.push_back(vector<TE>(0));
+        singleTraceEnergies.back().reserve(v.size());
+        double prev = -100000000.0;
+        for (int i = 0; i < v.size(); i++)
+        {
+            if (v[i] - prev > EPS)
+            {
+                singleTraceEnergies.back().push_back(v[i]);
+                prev = v[i];
+            }
+            else
+            {
+                singleTraceEnergies.back().back().Deg++;
+            }
+        }
+
+        for (int i = 0; i < singleTraceEnergies.back().size(); i++)
+        {
+//            cout << "deg before shift: "  << singleTraceEnergies.back()[i].Deg;
+            singleTraceEnergies.back()[i].Deg <<= (s-1);
+//            cout << " after shift: "  << singleTraceEnergies.back()[i].Deg << endl;
+        }
+
+//        cout << "Single-trace: bit = " << bit << ", state number = " << TotalSize(singleTraceEnergies.back()) << ", expected = " << StateCollection::Inst()->SingleTraceStateNumber(bit, s) << endl;
+#endif
     }
 }
 
 void EigenEnergyLargeN::BuildBosonicMultiTraceEnergies(int b, int n)
 {
-    vector<double>& res = statesByBoson[n][b];
-    int size = StateCollection::Inst()->SingleTraceStateNumber(b);
+    vector<TE>& res = statesByBoson[n][b];
+    int size = StateCollection::Inst()->SingleTraceStateNumber(b, s);
     res.reserve(BinomialCoefficient(size + n - 1, n));
     BuildBosonicMultiTraceEnergiesRec(b, singleTraceEnergies[b].size() - 1, n, .0, res);
+//    cout << "states built by " << n << " " << b << "-bit bosonic single trace: " << TotalSize(res) << endl;
 }
 
-void EigenEnergyLargeN::BuildBosonicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res)
+void EigenEnergyLargeN::BuildBosonicMultiTraceEnergiesRec(int b, int index, int n, TE energy, vector<TE>& res)
 {
     if (n == 0)
     {
-        res.push_back(Chop(energy));
+        res.push_back(energy);
         return;
     }
 
     if (index == 0)
     {
-        res.push_back(Chop(energy + singleTraceEnergies[b][0] * n));
+        res.push_back(energy.Times(singleTraceEnergies[b][0].PowerBoson(n)));
         return;
     }
 
-    for (int i = 0; i <= n; i++)
+    BuildBosonicMultiTraceEnergiesRec(b, index - 1, n, energy, res);
+
+    for (int i = 1; i <= n; i++)
     {
-        BuildBosonicMultiTraceEnergiesRec(b, index - 1, n - i, energy, res);
-        energy += singleTraceEnergies[b][index];
+        BuildBosonicMultiTraceEnergiesRec(b, index - 1, n - i, energy.Times(singleTraceEnergies[b][index].PowerBoson(i)), res);
     }
 }
 
 void EigenEnergyLargeN::BuildFermionicMultiTraceEnergies(int b, int n)
 {
-    vector<double>& res = statesByFermion[n][b];
-    int size = StateCollection::Inst()->SingleTraceStateNumber(b);
+    vector<TE>& res = statesByFermion[n][b];
+    int size = StateCollection::Inst()->SingleTraceStateNumber(b, s);
     res.reserve(BinomialCoefficient(size, n));
     BuildFermionicMultiTraceEnergiesRec(b, singleTraceEnergies[b].size() - 1, n, .0, res);
+//    cout << "states built by " << n << " " << b << "-bit fermionic single trace: " << TotalSize(res) << endl;
 }
 
-void EigenEnergyLargeN::BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res)
+void EigenEnergyLargeN::BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, TE energy, vector<TE>& res)
 {
     if (n == 0)
     {
-        res.push_back(Chop(energy));
+        res.push_back(energy);
         return;
     }
 
-    if (index + 1 < n)
+    if (index == 0)
     {
-        return;
-    }
-    else if (index + 1 == n)
-    {
-        for (int i = 0; i <= index; i++) 
-        {
-            energy += singleTraceEnergies[b][i];
-        }
-        res.push_back(Chop(energy));
+        if (singleTraceEnergies[b][0].Deg < n) return;
+        res.push_back(energy.Times(singleTraceEnergies[b][0].PowerFermion(n)));
         return;
     }
 
-    BuildFermionicMultiTraceEnergiesRec(b, index - 1, n - 1, energy + singleTraceEnergies[b][index], res);
     BuildFermionicMultiTraceEnergiesRec(b, index - 1, n, energy, res);
+
+    for (int i = 1; i <= n && i <= singleTraceEnergies[b][index].Deg; i++)
+    {
+        BuildFermionicMultiTraceEnergiesRec(b, index - 1, n - i, energy.Times(singleTraceEnergies[b][index].PowerFermion(i)), res);
+    }
 }
 
 void EigenEnergyLargeN::CalculateByDynamics()
@@ -213,19 +241,19 @@ void EigenEnergyLargeN::CalculateByDynamics()
     statesByFermion.reserve(M + 1);
 
     // the (0, i) elements are vacuum states.
-    statesByBoson.push_back(vector<vector<double> >(M + 1, vector<double>(1, 0.0)));
-    statesByFermion.push_back(vector<vector<double> >(M + 1, vector<double>(1, 0.0)));
+    statesByBoson.push_back(vector<vector<TE> >(M + 1, vector<TE>(1, 0.0)));
+    statesByFermion.push_back(vector<vector<TE> >(M + 1, vector<TE>(1, 0.0)));
 
     // the first element of statesByBoson is simply singleTraceEnergies
     statesByBoson.push_back(singleTraceEnergies);
     // for statesByFermion, we let its first element be empty, because we do
     // not need it in the following calculation.
-    statesByFermion.push_back(vector<vector<double> >());
+    statesByFermion.push_back(vector<vector<TE> >());
 
     for (int i = 2; i <= M; i++)
     {
-        statesByBoson.push_back(vector<vector<double> >(M/i + 1, vector<double>()));
-        statesByFermion.push_back(vector<vector<double> >(M/i + 1, vector<double>()));
+        statesByBoson.push_back(vector<vector<TE> >(M/i + 1, vector<TE>()));
+        statesByFermion.push_back(vector<vector<TE> >(M/i + 1, vector<TE>()));
         for (int bit = 1; bit * i <= M; bit++)
         {
             //cout << "(" << i << ", " << bit << ") single trace states #:";
@@ -233,7 +261,7 @@ void EigenEnergyLargeN::CalculateByDynamics()
 
             BuildBosonicMultiTraceEnergies(bit, i);
             //cout << " statesByBoson: " << statesByBoson[i][bit];
-            if (i <= StateCollection::Inst()->SingleTraceStateNumber(bit))
+            if (i <= StateCollection::Inst()->SingleTraceStateNumber(bit, s))
             {
                 BuildFermionicMultiTraceEnergies(bit, i);
                 //cout << ", statesByFermion: " << statesByFermion[i][bit];
@@ -250,11 +278,31 @@ void EigenEnergyLargeN::CalculateByDynamics()
 
 void EigenEnergyLargeN::BuildAllStates()
 {
-    allStates.reserve(StateCollection::Inst()->StateNumber(M));
+    // To avoid allocating too much memory, we estimate the size
+    // of the allStates vector. The estimation was obtained by fitting 
+    // the run results data. 
+    // By excel, we obtain the size can be approximated by
+    // size = 2^[2.09122*M-1.699*M/s-const], here we choose
+    // size = 2^[2.1*M-1.5*M/s - 1] 
+    int cap = (int)floor(pow(2, 2.1 * M - 1.5 * M /s) - 1); 
+    allStates.reserve(cap);
     BuildAllStatesRec(M, M, .0, 0);
     sort(allStates.begin(), allStates.end());
-    cout << "total states number: " << allStates.size() << ", expected: " << StateCollection::Inst()->StateNumber(M) << endl;
-    //cout << "eigenenergies: " << allStates << endl;
+    int size = allStates.size();
+    Collect(allStates);
+
+    if (TotalSize(allStates) != StateCollection::Inst()->StateNumber(M, s))
+    {
+        cout << "Error BuildAllStates: Total states=";
+        cout << TotalSize(allStates) << ", expected=" << StateCollection::Inst()->StateNumber(M, s) << endl;
+    }
+
+    if (cap != allStates.capacity())
+    {    
+        cout << "expected capacity: " << cap << ", actual capacity: " << allStates.capacity() << endl; 
+        cout << "allState vector size, before collect: " << size << ", after collect: " << allStates.size() << endl;
+        cout << "Compress ratio: " << size / (double) TotalSize(allStates) << endl;
+    }
 }
 
 void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
@@ -274,9 +322,9 @@ void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
 
         for (int i = allStates.size() - 1; i >= 0; i--)
         {
-            Db rho = exp(-beta * (T0 * allStates[i] + M)/sqrt(2));
+            Db rho = exp(-beta * (T0 * allStates[i].E + M)/sqrt(2)) * allStates[i].Deg;
             Z += rho;
-            E += rho * (T0 * allStates[i] + M)/sqrt(2);
+            E += rho * (T0 * allStates[i].E + M)/sqrt(2);
         }
 
         E /= Z;
@@ -285,8 +333,8 @@ void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
 
         for (int i = allStates.size() - 1; i >= 0; i--)
         {
-            Db rho = exp(-beta * (T0 * allStates[i] + M)/sqrt(2)) / Z;
-            entropy -= rho * log(rho);
+            Db rho = exp(-beta * (T0 * allStates[i].E + M)/sqrt(2)) / Z;
+            entropy -= rho * log(rho) * allStates[i].Deg;
         }
 
         ofs << beta << " " << log(Z) << " " << E << " " << entropy << endl;
@@ -399,8 +447,8 @@ void EigenEnergyLargeN::CalcFluctuation(double beta)
     double Z = .0;
     for (int i = allStates.size() - 1; i >= 0; i--)
     {
-        double rho = exp(-beta * (allStates[i] + M)/sqrt(2));
-        Z += rho;
+        double rho = exp(-beta * (allStates[i].E + M)/sqrt(2));
+        Z += rho * allStates[i].Deg;
     }
 
     ofs << beta << " " << Z << endl;
@@ -411,10 +459,10 @@ void EigenEnergyLargeN::CalcFluctuation(double beta)
 
         for (int i = allStates.size() - 1; i >= 0; i--)
         {
-            double rho = exp(-beta * (allStates[i] + M) / sqrt(2));
-            double angle = -(allStates[i] + M) / sqrt(2) * t;
-            ZtReal += rho * cos(angle);
-            ZtImag += rho * sin(angle);
+            double rho = exp(-beta * (allStates[i].E + M) / sqrt(2));
+            double angle = -(allStates[i].E + M) / sqrt(2) * t;
+            ZtReal += rho * cos(angle) * allStates[i].Deg;
+            ZtImag += rho * sin(angle) * allStates[i].Deg;
         }
 
         ofs << t << " " << ZtReal << " " << ZtImag << endl;
@@ -430,13 +478,16 @@ void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
     if (buckets > 0) file += "g.txt";
 	else file += ".txt";
 
+    int tot = 0;
+
 	ofstream ofs(file.c_str());
 
     if (buckets <= 0)
     {
         for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
 	    {
-		    ofs << singleTraceEnergies[bit][i] << endl;
+            tot += singleTraceEnergies[bit][i].Deg;
+		    ofs << singleTraceEnergies[bit][i].E << ' ' << singleTraceEnergies[bit][i].Deg << endl;
 	    }
     }
     else
@@ -445,11 +496,34 @@ void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
 		vector<DegEnergy> res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
 		for (int i = 0; i < res.size(); i++)
 		{
+            tot += res[i].Deg;
 			ofs << res[i].E << ' ' << res[i].Deg << endl;
 		}
     }
 
+    cout << "Total sates: " << tot << ", expected: " << StateCollection::Inst()->SingleTraceStateNumber(bit, s) << endl;
+
     ofs.close();
+}
+
+vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<TE>& states, int buckets, double range)
+{
+    double delta = range * 2 / buckets;
+	vector<DegEnergy> res;
+	for (int i = 0; i < buckets; i++)
+	{
+		res.push_back(DegEnergy(-range + delta * (i + .5), 0));
+	}
+
+	for (int i = 0; i < states.size(); i++)
+	{
+		int pos = (int)floor((states[i].E + range) / delta);
+		if (pos == -1) pos = 0;
+		if (pos == buckets) pos = buckets - 1;
+		res[pos].Deg += states[i].Deg;
+	}
+
+    return res;
 }
 
 vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<double>& states, int buckets, double range)
@@ -466,7 +540,7 @@ vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<double>& states, int 
 		int pos = (int)floor((states[i] + range) / delta);
 		if (pos == -1) pos = 0;
 		if (pos == buckets) pos = buckets - 1;
-		res[pos].Deg++; 
+		res[pos].Deg++;
 	}
 
     return res;
@@ -474,12 +548,6 @@ vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<double>& states, int 
 
 void EigenEnergyLargeN::SaveEnergies(int buckets)
 {
-	if (s != 1)
-	{
-		cout << "Error: s = " << s << ". SaveEnergies only support for the s=1 case.";
-		return;
-	}
-
 	string file = "EEs=" + ToString(s) + "M=" + ToString(M);
 	if (buckets > 0) file += "g.txt";
 	else file += ".txt";
@@ -489,7 +557,7 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 	{
 		for (int i = 0; i < this->allStates.size(); i++)
 		{
-			ofs << allStates[i] << endl;
+			ofs << Chop(allStates[i].E) << ' ' << allStates[i].Deg << endl;
 		}
 	}
 	else
@@ -505,14 +573,34 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 	ofs.close();
 }
 
-void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, double energy, int deg)
+
+void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, TE energy, int deg)
 {
     if (bitRemain == 0 || singleTraceBits == 1)
     {
         int n = (1 << (deg - 1));
         if (bitRemain > 0) n = (1 << deg);
-        for (int i = 0; i < n; i++)        
-            allStates.push_back(energy);
+        TE toAdd;
+        if (bitRemain == 0)
+        {
+            toAdd = energy;
+        }
+        else if (bitRemain == 1)
+        {
+            toAdd = energy.Times(singleTraceEnergies[1][0]);
+        }
+        else
+        {
+            toAdd = energy.Times(statesByBoth[bitRemain][1][0]);
+        }
+
+        allStates.push_back(TE(toAdd.E, toAdd.Deg * n));
+        return;
+    }
+
+    if (singleTraceBits == 0)
+    {
+        cout << "BuildAllStatesRec should not reach here!!!!!!!!!!!!!!!!!" << endl;
         return;
     }
 
@@ -529,7 +617,7 @@ void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, do
     for (int i = 0; i < singleTraceEnergies[singleTraceBits].size(); i++)
     {
         BuildAllStatesRec(bitRemain - singleTraceBits, singleTraceBits - 1, 
-            energy + singleTraceEnergies[singleTraceBits][i], deg + 1);
+            energy.Times(singleTraceEnergies[singleTraceBits][i]), deg + 1);
     }
 
     // pick two of more.
@@ -538,7 +626,7 @@ void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, do
         for (int j = 0; j < statesByBoth[i][singleTraceBits].size(); j++)
         {
             BuildAllStatesRec(bitRemain - singleTraceBits * i, singleTraceBits - 1, 
-                energy + statesByBoth[i][singleTraceBits][j], deg + 1);
+                energy.Times(statesByBoth[i][singleTraceBits][j]), deg + 1);
         }
     }
 }
@@ -546,15 +634,15 @@ void EigenEnergyLargeN::BuildAllStatesRec(int bitRemain, int singleTraceBits, do
 void EigenEnergyLargeN::BuildStatesByBoth()
 {
     statesByBoth.reserve(M + 1);
-    statesByBoth.push_back(vector<vector<double> >());
-    statesByBoth.push_back(vector<vector<double> >());
+    statesByBoth.push_back(vector<vector<TE> >());
+    statesByBoth.push_back(vector<vector<TE> >());
     
     for (int i = 2; i <= M; i++)
     {
-        statesByBoth.push_back(vector<vector<double> > (M/i + 1, vector<double>()));
+        statesByBoth.push_back(vector<vector<TE> > (M/i + 1, vector<TE>()));
         for (int bit = 1; bit * i <= M; bit++)
         {
-            vector<double>& v = statesByBoth[i][bit];
+            vector<TE>& v = statesByBoth[i][bit];
 			int size = 0;
 
 			// go through first round to calculate number of states.
@@ -573,18 +661,48 @@ void EigenEnergyLargeN::BuildStatesByBoth()
                 }
             }
 
-            //cout << "(" << i << ", " << bit << "): " << statesByBoth[i][bit] << endl;
+            sort(v.begin(), v.end());
+            Collect(v);
+//            cout << "statesByBoth(" << i << ", " << bit << "): " << TotalSize(statesByBoth[i][bit]) << endl;
         }
     }
 }
 
-void EigenEnergyLargeN::MergeEnergy(vector<double>& a, vector<double>& b, vector<double>& res)
+i64 EigenEnergyLargeN::TotalSize(vector<TE>& v)
+{
+    i64 tot = 0;
+    for (int i = 0; i < v.size(); i++)
+    {
+        tot += v[i].Deg;
+    }
+    return tot;
+}
+
+void EigenEnergyLargeN::Collect(vector<TE>& v)
+{
+    int saved = 0;
+    for (int i = 1; i < v.size(); i++)
+    {
+        if (v[i].E - v[saved].E < EPS)
+        {
+            v[saved].Deg += v[i].Deg;
+        }
+        else
+        {
+            v[++saved] = v[i];
+        }
+    }
+
+    v.resize(saved + 1);
+}
+
+void EigenEnergyLargeN::MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res)
 {
     for (int i = 0; i < a.size(); i++)
     {
         for (int j = 0; j < b.size(); j++)
         {
-            res.push_back(Chop(a[i] + b[j]));
+            res.push_back(a[i].Times(b[j]));
         }
     }
 }

@@ -31,7 +31,7 @@ snum StateCounter::SingleTrace(int M, int s)
         return -1;
     }
 
-    return singleTraceNumbers[s][M];
+    return singleTraceNumbers[s][M] << (s -1);
 }
 
 snum StateCounter::MultiTrace(int M, int s)
@@ -42,7 +42,7 @@ snum StateCounter::MultiTrace(int M, int s)
         return -1;
     }
 
-    return StateNumbers(s, M, M, 0) >> (s - 1);
+    return StateNumbers(s, M, M, 0);
 }
 
 void StateCounter::InitSingleTraceNumber()
@@ -269,8 +269,8 @@ snum StateCounter::StateNumbers(int s, int bit, int remain, int b)
     {
 		for (int j = 0; i + j <= a; j++)
 		{
-			snum n1 = BinomialCoefficient(SingleTrace(bit, s) << (s - 1), (i64)i);
-			snum n2 = BinomialCoefficient((SingleTrace(bit, s) << (s - 1)) - 1 + j, (i64)j);
+			snum n1 = BinomialCoefficient(SingleTrace(bit, s), (i64)i);
+			snum n2 = BinomialCoefficient(SingleTrace(bit, s) - 1 + j, (i64)j);
 			ret += n1 * n2 * StateNumbers(s, bit - 1, remain - (i+j) * bit, (b+i)%2);
 		}
     }

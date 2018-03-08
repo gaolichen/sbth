@@ -281,10 +281,10 @@ void OutputStateStructure()
 	sg2.OutputStateStructure(); 
 }
 
-void CalculateAllEigenvalues(int bits, int buckets)
+void CalculateAllEigenvalues(int spin, int bits, int buckets)
 {
-    cout << "Calculating large N energies for bits=" << bits << " ..." << endl;
-	EigenEnergyLargeN ee(bits);
+    cout << "Calculating large N energies for spin=" << spin << ", bits=" << bits << " ..." << endl;
+	EigenEnergyLargeN ee(bits, spin);
     ee.CalculateByDynamics();
     ee.SaveEnergies(buckets);
     //ee.CalcFluctuation(1.5);
@@ -365,22 +365,22 @@ int main(int argc, char* argv[])
     }
     else if (cmd == "-e")
 	{
-		if (argc < 3)
+		if (argc < 4)
 		{
 			cout << "need one more integer type  parameter." << endl;
-            cout << "Usage: sbth -e bits [buckets=101]" << endl;
-            cout << "Example: sbth -e 19 50" << endl;
+            cout << "Usage: sbth -e spin bits [buckets=101]" << endl;
+            cout << "Example: sbth -e 1 19 50" << endl;
 			return -1;
 		}
 
         int bucket = 101;
 
-        if (argc >= 4)
+        if (argc >= 5)
         {
-            bucket = atoi(argv[3]);
+            bucket = atoi(argv[4]);
         }
 
-	    CalculateAllEigenvalues(atoi(argv[2]), bucket);
+	    CalculateAllEigenvalues(atoi(argv[2]), atoi(argv[3]), bucket);
 	}
     else if (cmd == "-es")
     {

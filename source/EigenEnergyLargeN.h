@@ -29,9 +29,37 @@ struct DegEnergy
         this->E = e;
         this->Deg = degenerate;
     }
+
+    bool operator< (const DegEnergy a) const
+    {
+        return this->E < a.E;
+    }
+
+    DegEnergy& operator=(double e)
+    {
+        this->E = e;
+        this->Deg = 1;
+
+        return *this;
+    }
+
+    DegEnergy PowerBoson(int n)
+    {
+        return DegEnergy(E * n, BinomialCoefficient(Deg + n - 1, n));
+    }
+
+    DegEnergy PowerFermion(int n)
+    {
+        return DegEnergy(E * n, BinomialCoefficient(Deg, n));
+    }
+
+    DegEnergy Times(DegEnergy energy)
+    {
+        return DegEnergy(this->E + energy.E, this->Deg * energy.Deg);
+    }
 };
 
-//#define DEG_ENERGY_TYPE
+#define DEG_ENERGY_TYPE
 
 #ifdef DEG_ENERGY_TYPE
 typedef DegEnergy TE;
@@ -101,7 +129,7 @@ private:
     // index: pick n b-bit single traces from collection {0, 1, ... index}
     // energy: current value of energy.
     // res: the vector to stotre results.
-    void BuildBosonicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res);
+    void BuildBosonicMultiTraceEnergiesRec(int b, int index, int n, TE energy, vector<TE>& res);
 
     // find all fermionic multi-trace energies built out of n number of b-bit single trace states.
     // store results in statesByFermion.
@@ -111,7 +139,7 @@ private:
     // index: pick n b-bit single traces from collection {0, 1, ... index}
     // energy: current value of energy.
     // res: the vector to stotre results.
-    void BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, double energy, vector<double>& res);
+    void BuildFermionicMultiTraceEnergiesRec(int b, int index, int n, TE energy, vector<TE>& res);
     
     // build statesByBoth
     void BuildStatesByBoth();
@@ -120,17 +148,23 @@ private:
     void BuildAllStates();
 
     // The recursive function invoked by BuildAllStates().
-    void BuildAllStatesRec(int bitRemain, int singleTraceBits, double energy, int deg);
+    void BuildAllStatesRec(int bitRemain, int singleTraceBits, TE energy, int deg);
 
     // merge two lists of eigenenergies to one.
     // res will be of size size(a)*size(b), and each element is of the form a[i] + b[j].
-    static void MergeEnergy(vector<double>& a, vector<double>& b, vector<double>& res);
+    static void MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res);
 
     // divide the energy eigenvalues into buckets. 
     // states: the energy eigenvalues to divide
     // buckets: number of buckets
     // range: all eigenvalues lie in the interval (-range, range).
+    static vector<DegEnergy> BucketEnergies(vector<TE>& states, int buckets, double range);
+
     static vector<DegEnergy> BucketEnergies(vector<double>& states, int buckets, double range);
+
+    static void Collect(vector<TE>& v);
+
+    static i64 TotalSize(vector<TE>& v);
 
 public:
 	// constructor.
