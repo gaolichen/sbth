@@ -1,9 +1,11 @@
 #include "Tests.h"
 #include <iomanip>
+#include <fstream>
 
 Tests::Tests(int s)
 {
     this->s = s;
+    this->datapath = "/users/gaolichen/gitroot/sbth/data/";
 }
 
 void Tests::DemoStateNumber()
@@ -35,7 +37,7 @@ void Tests::DemoStateNumber()
 	}
 }
 
-void Tests::SingleTraceEnergies(int M)
+void Tests::SingleTraceEnergies_StateNumber(int M)
 {
     int maxSpin = 4;
 
@@ -59,7 +61,7 @@ void Tests::SingleTraceEnergies(int M)
     cout << "Test::SingleTraceEnergies passed." << endl;
 }
 
-void Tests::MultiTraceEigenEnergies(int maxM)
+void Tests::MultiTraceEigenEnergies_StateNumber(int maxM)
 {
     StateCounter* inst = StateCounter::Inst();
     for (int bit = 1; bit <= maxM; bit++)
@@ -76,6 +78,106 @@ void Tests::MultiTraceEigenEnergies(int maxM)
     }
 
     cout << "Test::MultiTraceEigenEnergies passed for s=" << s << ", maxM=" << maxM << endl;
+}
+
+vector<TE> Tests::ReadEnergyFile(string file)
+{
+    ifstream ifs(file.c_str());
+    if (!ifs.good())
+    {
+        cout << "Tests::ReadEnergyFile: cannot open " << file << endl;
+        ifs.close();
+        return vector<TE>();
+    }
+
+    vector<TE> ret;
+
+    double e1, e2;
+    ifs >> e1 >> e2;
+
+    int deg = (int)floor(e2 + 0.5);
+
+    // if e2 is integer, then the format of each line is [E degenerate]
+    if (abs(deg-e2) < EPS && deg > 0)
+    {
+        ret.push_back(TE(e1, deg));
+        while (ifs >> e1 >> deg)
+        {
+            ret.push_back(TE(e1,deg));
+        }
+    }
+    else
+    {
+        // e2 is also an energy eigenvalue
+        ret.push_back(e1);
+        if (e2 - e1 < EPS)
+        {
+            ret.back().Deg++;
+        }
+        else
+        {
+            ret.push_back(e2);
+        }
+
+        while (ifs >> e1)
+        {
+            if (e1 - ret.back().E < EPS)
+            {
+                ret.back().Deg++;
+            }
+            else
+            {
+                ret.push_back(e1);
+            }
+        }
+    }
+
+    ifs.close();
+    return ret;
+}
+
+void Tests::MultiTraceEigenEnergies_States(int maxM)
+{
+    for (int bit = 1; bit <= maxM; bit++)
+    {
+        string file = this->datapath + "EEs=" + ToString(s) + "M=" + ToString(bit) + ".txt";
+
+        vector<TE> expected = ReadEnergyFile(file);
+
+        // no existing results, cannot compare, so ignore it.
+        if (expected.size() == 0) continue;
+
+        EigenEnergyLargeN calc(bit, s);
+        calc.CalculateByDynamics();
+
+        const vector<TE>& ret = calc.AllStates();
+        Assert(EnergyListEqual(expected, ret), "MultiTraceEigenEnergies_States, bit=" + ToString(bit) + " expected != ret");
+    }
+
+    cout << "Test::MultiTraceEigenEnergies_States passed for s=" << s << ", maxM=" << maxM << endl;
+}
+
+void Tests::SingleTraceEnergies_States(int maxM)
+{
+    EigenEnergyLargeN calc(maxM, s);
+    calc.CalcAllSingleTraceEnergies();
+
+    for (int bit = 1; bit <= maxM; bit++)
+    {
+        string file = this->datapath + "EEs=" + ToString(s) + "M=" + ToString(bit) + "s.txt";
+        vector<TE> expected = ReadEnergyFile(file);
+        // no existing results, cannot compare, so ignore it.
+        if (expected.size() == 0) continue;
+
+        const vector<TE>& ret = calc.SingleEnergies(bit);
+        //cout << "ret=" << ret << "\n expected=" << expected << endl;
+        //if (EnergyListEqual(expected, ret)) cout << "equal" << endl;
+        //else cout << "not equal" << endl;
+
+        Assert(EnergyListEqual(expected, ret), "SingleTraceEnergies_States: bit=" + ToString(bit) + " expected != ret");
+    }
+
+    cout << "Test::SingleTraceEnergies_States passed for s=" << s << ", maxM=" << maxM << endl;
 }
 
 void Tests::DemoAverageEnergy()
@@ -97,12 +199,15 @@ void Tests::DemoAverageEnergy()
 void Tests::Run()
 {
     Tests test1(1);
-    test1.SingleTraceEnergies(7);
-    test1.MultiTraceEigenEnergies(11);
+    test1.SingleTraceEnergies_StateNumber(7);
+    test1.MultiTraceEigenEnergies_StateNumber(11);
 
     Tests test2(2);
-    test2.MultiTraceEigenEnergies(8);
+    test2.MultiTraceEigenEnergies_StateNumber(8);
 
     Tests test3(3);
-    test3.MultiTraceEigenEnergies(6);
+    test3.MultiTraceEigenEnergies_StateNumber(6);
+
+    test1.SingleTraceEnergies_States(13);
+    test1.MultiTraceEigenEnergies_States(13);
 }

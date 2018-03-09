@@ -30,9 +30,14 @@ struct DegEnergy
         this->Deg = degenerate;
     }
 
-    bool operator< (const DegEnergy a) const
+    bool operator< (const DegEnergy& a) const
     {
-        return this->E < a.E;
+        if (this->E != a.E)
+        {
+            return this->E < a.E;
+        }
+
+        return this->Deg < a.Deg;
     }
 
     DegEnergy& operator=(double e)
@@ -58,6 +63,8 @@ struct DegEnergy
         return DegEnergy(this->E + energy.E, this->Deg * energy.Deg);
     }
 };
+
+ostream& operator<<(ostream& os, const DegEnergy& de);
 
 #define DEG_ENERGY_TYPE
 
@@ -206,5 +213,9 @@ public:
     int SingleEnergySize(int bit) { return TotalSize(this->singleTraceEnergies[bit]); }
     
     int MultiEnergySize() { return TotalSize(this->allStates); }
+
+    const vector<TE>& AllStates() const { return this->allStates; };
+
+    const vector<TE>& SingleEnergies(int bit) const { return this->singleTraceEnergies[bit]; }
 };
 

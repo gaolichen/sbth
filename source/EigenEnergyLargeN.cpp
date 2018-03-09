@@ -743,3 +743,9 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEige
 
 	ofs2.close();
 }
+
+ostream& operator<<(ostream& os, const DegEnergy& de)
+{
+    os << '(' << de.E << ',' << de.Deg << ')';
+    return os;
+}
