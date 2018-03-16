@@ -4,7 +4,7 @@
 #include <exception>
 #include "BitUtility.h"
 #include "StateCounter.h"
-#include "EigenEnergyLargeN.h"
+#include "EigenSpectrum.h"
 
 
 class TestError : public exception

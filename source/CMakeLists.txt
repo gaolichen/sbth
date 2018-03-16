@@ -36,7 +36,7 @@ IF(WIN32)
 		TraceState.h 
 		ScriptGenerator.h
 		StateType.h
-		EigenEnergyLargeN.h
+		EigenSpectrum.h
 		StateCounter.h
         Tests.h
 	)

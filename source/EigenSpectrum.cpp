@@ -1,4 +1,4 @@
-#include "EigenEnergyLargeN.h"
+#include "EigenSpectrum.h"
 #include "Hamiltonian.h"
 #include "BitUtility.h"
 #include "StateCollection.h"

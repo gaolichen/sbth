@@ -17,7 +17,7 @@
 #include "NormCalculator.h"
 #include "ScriptGenerator.h"
 #include "StateType.h"
-#include "EigenEnergyLargeN.h"
+#include "EigenSpectrum.h"
 #include "StateCounter.h"
 #include "Tests.h"
 
