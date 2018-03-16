@@ -1,11 +1,11 @@
-#include "EigenSpectrum.h"
-#include "Hamiltonian.h"
-#include "BitUtility.h"
-#include "StateCollection.h"
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
 #include <iomanip>
+#include "EigenSpectrum.h"
+#include "Hamiltonian.h"
+#include "BitUtility.h"
+#include "StateCollection.h"
 using namespace std;
 
 #define HIGH_PRECISION
@@ -15,6 +15,96 @@ typedef long double Db;
 #else
 typedef double Db;
 #endif
+
+
+/// global functions.
+
+i64 TotalSize(vector<TE>& v)
+{
+    i64 tot = 0;
+    for (int i = 0; i < v.size(); i++)
+    {
+        tot += v[i].Deg;
+    }
+    return tot;
+}
+
+void Collect(vector<TE>& v)
+{
+    int saved = 0;
+    for (int i = 1; i < v.size(); i++)
+    {
+        if (v[i].E - v[saved].E < EPS)
+        {
+            v[saved].Deg += v[i].Deg;
+        }
+        else
+        {
+            v[++saved] = v[i];
+        }
+    }
+
+    v.resize(saved + 1);
+}
+
+void MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res)
+{
+    for (int i = 0; i < a.size(); i++)
+    {
+        for (int j = 0; j < b.size(); j++)
+        {
+            res.push_back(a[i].Times(b[j]));
+        }
+    }
+}
+
+vector<DegEnergy> BucketEnergies(vector<TE>& states, int buckets, double range)
+{
+    double delta = range * 2 / buckets;
+	vector<DegEnergy> res;
+	for (int i = 0; i < buckets; i++)
+	{
+		res.push_back(DegEnergy(-range + delta * (i + .5), 0));
+	}
+
+	for (int i = 0; i < states.size(); i++)
+	{
+		int pos = (int)floor((states[i].E + range) / delta);
+		if (pos == -1) pos = 0;
+		if (pos == buckets) pos = buckets - 1;
+		res[pos].Deg += states[i].Deg;
+	}
+
+    return res;
+}
+
+vector<DegEnergy> BucketEnergies(vector<double>& states, int buckets, double range)
+{
+    double delta = range * 2 / buckets;
+	vector<DegEnergy> res;
+	for (int i = 0; i < buckets; i++)
+	{
+		res.push_back(DegEnergy(-range + delta * (i + .5), 0));
+	}
+
+	for (int i = 0; i < states.size(); i++)
+	{
+		int pos = (int)floor((states[i] + range) / delta);
+		if (pos == -1) pos = 0;
+		if (pos == buckets) pos = buckets - 1;
+		res[pos].Deg++;
+	}
+
+    return res;
+}
+
+ostream& operator<<(ostream& os, const DegEnergy& de)
+{
+    os << '(' << de.E << ',' << de.Deg << ')';
+    return os;
+}
+
+/// Functions of EigenEnergyLargeN class.
 
 void EigenEnergyLargeN::CalcAllSingleTraceEnergies()
 {
@@ -342,45 +432,6 @@ void EigenEnergyLargeN::BuildStatesByBoth()
     }
 }
 
-i64 TotalSize(vector<TE>& v)
-{
-    i64 tot = 0;
-    for (int i = 0; i < v.size(); i++)
-    {
-        tot += v[i].Deg;
-    }
-    return tot;
-}
-
-void Collect(vector<TE>& v)
-{
-    int saved = 0;
-    for (int i = 1; i < v.size(); i++)
-    {
-        if (v[i].E - v[saved].E < EPS)
-        {
-            v[saved].Deg += v[i].Deg;
-        }
-        else
-        {
-            v[++saved] = v[i];
-        }
-    }
-
-    v.resize(saved + 1);
-}
-
-void MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res)
-{
-    for (int i = 0; i < a.size(); i++)
-    {
-        for (int j = 0; j < b.size(); j++)
-        {
-            res.push_back(a[i].Times(b[j]));
-        }
-    }
-}
-
 void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
 {
     double minB = .0;
@@ -418,6 +469,105 @@ void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
 
     ofs.close();
 }
+
+void EigenEnergyLargeN::CalcFluctuation(double beta)
+{
+    double maxT = 100.0;
+    double delta = maxT / 100;
+
+    string file = "FLs=" + ToString(s) + "M=" + ToString(M) + ".txt";
+	ofstream ofs(file.c_str());
+
+    double Z = .0;
+    for (int i = allStates.size() - 1; i >= 0; i--)
+    {
+        double rho = exp(-beta * (allStates[i].E + M)/sqrt(2));
+        Z += rho * allStates[i].Deg;
+    }
+
+    ofs << beta << " " << Z << endl;
+    for (double t = 0.0; t <= maxT + 1e-8; t += delta)
+    {
+        double ZtReal = .0;
+        double ZtImag = .0;
+
+        for (int i = allStates.size() - 1; i >= 0; i--)
+        {
+            double rho = exp(-beta * (allStates[i].E + M) / sqrt(2));
+            double angle = -(allStates[i].E + M) / sqrt(2) * t;
+            ZtReal += rho * cos(angle) * allStates[i].Deg;
+            ZtImag += rho * sin(angle) * allStates[i].Deg;
+        }
+
+        ofs << t << " " << ZtReal << " " << ZtImag << endl;
+    }
+
+    ofs.close();
+}
+
+void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
+{
+    string file = "EEs=" + ToString(s) + "M=" + ToString(bit) + "s";
+
+    if (buckets > 0) file += "g.txt";
+	else file += ".txt";
+
+    int tot = 0;
+
+	ofstream ofs(file.c_str());
+
+    if (buckets <= 0)
+    {
+        for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
+	    {
+            tot += singleTraceEnergies[bit][i].Deg;
+		    ofs << singleTraceEnergies[bit][i].E << ' ' << singleTraceEnergies[bit][i].Deg << endl;
+	    }
+    }
+    else
+    {
+        double range = 4.0 * s /tan(PI/(2 * bit));
+		vector<DegEnergy> res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
+		for (int i = 0; i < res.size(); i++)
+		{
+            tot += res[i].Deg;
+			ofs << res[i].E << ' ' << res[i].Deg << endl;
+		}
+    }
+
+    cout << "Total sates: " << tot << ", expected: " << StateCollection::Inst()->SingleTraceStateNumber(bit, s) << endl;
+
+    ofs.close();
+}
+
+void EigenEnergyLargeN::SaveEnergies(int buckets)
+{
+	string file = "EEs=" + ToString(s) + "M=" + ToString(M);
+	if (buckets > 0) file += "g.txt";
+	else file += ".txt";
+
+	ofstream ofs(file.c_str());
+	if (buckets <= 0)
+	{
+		for (int i = 0; i < this->allStates.size(); i++)
+		{
+			ofs << Chop(allStates[i].E) << ' ' << allStates[i].Deg << endl;
+		}
+	}
+	else
+	{
+		double range = 4.0 * s /tan(PI/(2 * M));
+		vector<DegEnergy> res = BucketEnergies(this->allStates, buckets, range);
+		for (int i = 0; i < res.size(); i++)
+		{
+			ofs << res[i].E << ' ' << res[i].Deg << endl;
+		}
+	}
+
+	ofs.close();
+}
+
+/// functions of EigenEnergyFiniteN class.
 
 void EigenEnergyFiniteN::CalculateThermoForN(double T0, double maxB, string datafolder, int steps)
 {
@@ -512,142 +662,6 @@ void EigenEnergyFiniteN::CalculateThermoForN(double T0, double maxB, string data
     ofs.close();
 }
 
-void EigenEnergyLargeN::CalcFluctuation(double beta)
-{
-    double maxT = 100.0;
-    double delta = maxT / 100;
-
-    string file = "FLs=" + ToString(s) + "M=" + ToString(M) + ".txt";
-	ofstream ofs(file.c_str());
-
-    double Z = .0;
-    for (int i = allStates.size() - 1; i >= 0; i--)
-    {
-        double rho = exp(-beta * (allStates[i].E + M)/sqrt(2));
-        Z += rho * allStates[i].Deg;
-    }
-
-    ofs << beta << " " << Z << endl;
-    for (double t = 0.0; t <= maxT + 1e-8; t += delta)
-    {
-        double ZtReal = .0;
-        double ZtImag = .0;
-
-        for (int i = allStates.size() - 1; i >= 0; i--)
-        {
-            double rho = exp(-beta * (allStates[i].E + M) / sqrt(2));
-            double angle = -(allStates[i].E + M) / sqrt(2) * t;
-            ZtReal += rho * cos(angle) * allStates[i].Deg;
-            ZtImag += rho * sin(angle) * allStates[i].Deg;
-        }
-
-        ofs << t << " " << ZtReal << " " << ZtImag << endl;
-    }
-
-    ofs.close();
-}
-
-vector<DegEnergy> BucketEnergies(vector<TE>& states, int buckets, double range)
-{
-    double delta = range * 2 / buckets;
-	vector<DegEnergy> res;
-	for (int i = 0; i < buckets; i++)
-	{
-		res.push_back(DegEnergy(-range + delta * (i + .5), 0));
-	}
-
-	for (int i = 0; i < states.size(); i++)
-	{
-		int pos = (int)floor((states[i].E + range) / delta);
-		if (pos == -1) pos = 0;
-		if (pos == buckets) pos = buckets - 1;
-		res[pos].Deg += states[i].Deg;
-	}
-
-    return res;
-}
-
-vector<DegEnergy> BucketEnergies(vector<double>& states, int buckets, double range)
-{
-    double delta = range * 2 / buckets;
-	vector<DegEnergy> res;
-	for (int i = 0; i < buckets; i++)
-	{
-		res.push_back(DegEnergy(-range + delta * (i + .5), 0));
-	}
-
-	for (int i = 0; i < states.size(); i++)
-	{
-		int pos = (int)floor((states[i] + range) / delta);
-		if (pos == -1) pos = 0;
-		if (pos == buckets) pos = buckets - 1;
-		res[pos].Deg++;
-	}
-
-    return res;
-}
-
-void EigenEnergyLargeN::SaveSingleEnergies(int bit, int buckets)
-{
-    string file = "EEs=" + ToString(s) + "M=" + ToString(bit) + "s";
-
-    if (buckets > 0) file += "g.txt";
-	else file += ".txt";
-
-    int tot = 0;
-
-	ofstream ofs(file.c_str());
-
-    if (buckets <= 0)
-    {
-        for (int i = 0; i < this->singleTraceEnergies[bit].size(); i++)
-	    {
-            tot += singleTraceEnergies[bit][i].Deg;
-		    ofs << singleTraceEnergies[bit][i].E << ' ' << singleTraceEnergies[bit][i].Deg << endl;
-	    }
-    }
-    else
-    {
-        double range = 4.0 * s /tan(PI/(2 * bit));
-		vector<DegEnergy> res = BucketEnergies(this->singleTraceEnergies[bit], buckets, range);
-		for (int i = 0; i < res.size(); i++)
-		{
-            tot += res[i].Deg;
-			ofs << res[i].E << ' ' << res[i].Deg << endl;
-		}
-    }
-
-    cout << "Total sates: " << tot << ", expected: " << StateCollection::Inst()->SingleTraceStateNumber(bit, s) << endl;
-
-    ofs.close();
-}
-
-void EigenEnergyLargeN::SaveEnergies(int buckets)
-{
-	string file = "EEs=" + ToString(s) + "M=" + ToString(M);
-	if (buckets > 0) file += "g.txt";
-	else file += ".txt";
-
-	ofstream ofs(file.c_str());
-	if (buckets <= 0)
-	{
-		for (int i = 0; i < this->allStates.size(); i++)
-		{
-			ofs << Chop(allStates[i].E) << ' ' << allStates[i].Deg << endl;
-		}
-	}
-	else
-	{
-		double range = 4.0 * s /tan(PI/(2 * M));
-		vector<DegEnergy> res = BucketEnergies(this->allStates, buckets, range);
-		for (int i = 0; i < res.size(); i++)
-		{
-			ofs << res[i].E << ' ' << res[i].Deg << endl;
-		}
-	}
-
-	ofs.close();
-}
 
 
 void EigenEnergyFiniteN::CalculateByEigen(int buckets, bool calcEigenvector)
@@ -740,8 +754,3 @@ void EigenEnergyFiniteN::CalculateByEigen(int buckets, bool calcEigenvector)
 	ofs2.close();
 }
 
-ostream& operator<<(ostream& os, const DegEnergy& de)
-{
-    os << '(' << de.E << ',' << de.Deg << ')';
-    return os;
-}
