@@ -14,7 +14,7 @@ SET(STRBIT_LIB_SRCS
 	StateId.cpp
 	TraceState.cpp
 	ScriptGenerator.cpp
-	EigenEnergyLargeN.cpp
+	EigenSpectrum.cpp
 	StateCounter.cpp
     Tests.cpp)
 
