@@ -293,8 +293,8 @@ void CalculateAllEigenvalues(int spin, int bits, int buckets)
 void CalculateAllEigenvaluesByEigen(int bits, int N, int buckets)
 {
     cout << "Calculating large N energies for bits=" << bits << " ..." << endl;
-	EigenEnergyLargeN ee(bits);
-    ee.CalculateByEigen(1.0/N, buckets, false);
+	EigenEnergyFiniteN ee(bits, (double)N);
+    ee.CalculateByEigen(buckets, false);
 }
 
 void SaveSingleEnergies(int s, int M, int buckets = 0)
@@ -317,7 +317,7 @@ void CalculateThermodynamics(int bits, double T0, double maxB, int steps = 100)
 void CalculateThermodynamicsForN(int N, double T0, double maxB, string datafolder, int steps = 1000)
 {
     cout << "Calculating thermodynamics for N=" << N << " ..." << endl;
-	EigenEnergyLargeN ee(N);
+	EigenEnergyFiniteN ee(N, (double)N);
     ee.CalculateThermoForN(T0, maxB, datafolder, steps);
 }
 

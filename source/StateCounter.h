@@ -15,6 +15,7 @@ private:
     vector<double> aveESingle;
     vector<vector<long double> > aveE;
 	vector<snum> noHalfMode;
+    vector<snum> withHalfMode;
 
 	StateCounter();
 	static StateCounter* inst;

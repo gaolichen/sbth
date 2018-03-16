@@ -12,7 +12,7 @@ using namespace std;
 struct DegEnergy
 {
     double E;
-    int Deg;
+    i64 Deg;
 
     DegEnergy()
     {
@@ -73,6 +73,22 @@ typedef DegEnergy TE;
 #else
 typedef double TE;
 #endif
+
+// merge two lists of eigenenergies to one.
+// res will be of size size(a)*size(b), and each element is of the form a[i] + b[j].
+void MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res);
+
+// divide the energy eigenvalues into buckets. 
+// states: the energy eigenvalues to divide
+// buckets: number of buckets
+// range: all eigenvalues lie in the interval (-range, range).
+vector<DegEnergy> BucketEnergies(vector<TE>& states, int buckets, double range);
+
+vector<DegEnergy> BucketEnergies(vector<double>& states, int buckets, double range);
+
+void Collect(vector<TE>& v);
+
+i64 TotalSize(vector<TE>& v);
 
 // struct provides comparision function for sorting eigenstates.
 struct EigenvalueLess
@@ -143,22 +159,6 @@ private:
     // The recursive function invoked by BuildAllStates().
     void BuildAllStatesRec(int bitRemain, int singleTraceBits, TE energy, int deg);
 
-    // merge two lists of eigenenergies to one.
-    // res will be of size size(a)*size(b), and each element is of the form a[i] + b[j].
-    static void MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res);
-
-    // divide the energy eigenvalues into buckets. 
-    // states: the energy eigenvalues to divide
-    // buckets: number of buckets
-    // range: all eigenvalues lie in the interval (-range, range).
-    static vector<DegEnergy> BucketEnergies(vector<TE>& states, int buckets, double range);
-
-    static vector<DegEnergy> BucketEnergies(vector<double>& states, int buckets, double range);
-
-    static void Collect(vector<TE>& v);
-
-    static i64 TotalSize(vector<TE>& v);
-
     static int EstimateStatesNumber(int s, int M);
 
 public:
@@ -170,15 +170,6 @@ public:
 		this->M = bits;
 		this->s = spin;
 	}
-	
-	// calculate all eigen energies and eigenstates using EigenLibrary
-	// and save the results to files. The file name for eigen energies data 
-	// is of the form  EEs=1M=5.txt and the one for eigen states is of the form
-	// ESs=1M=5.txt. 
-	// invN: the value of 1/N, should be very small
-    // buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
-    // calcEigenvector: true to calculate eigenvectors as well, otherwise only calculate eigenvalues.
-	void CalculateByEigen(double invN = DefaultInvN, int buckets = 0, bool calcEigenvector = true);
 
     // this function calculates all energies of single trace with bit number <= M and stores 
     // results in singleTraceEnergies.
@@ -191,14 +182,6 @@ public:
     // maxB: max value of beta, beta = 1/temperatur, the min value of beta is 0.0
     // steps: how many data sets to calculate. The interval between two connective data sets is maxB/steps.
     void CalculateThermo(double T0, double maxB, int steps = 100);
-
-    // calculate thermodynamics of string bit for M=1,2,..,N.
-    // the partition function Z is the sum of indidual Z of each M.
-    // T0: the string tension.
-    // maxB: max value of beta, beta = 1/temperatur, the min value of beta is 0.0
-    // datafolder: the path to the foler that contains energy eigenvalue data.
-    // steps: how many data sets to calculate. The interval between two connective data sets is maxB/steps.
-    void CalculateThermoForN(double T0, double maxB, string datafolder, int steps = 100);
 
     void CalcFluctuation(double beta);
 
@@ -217,5 +200,32 @@ public:
     const vector<TE>& AllStates() const { return this->allStates; };
 
     const vector<TE>& SingleEnergies(int bit) const { return this->singleTraceEnergies[bit]; }
+};
+
+class EigenEnergyFiniteN
+{
+private:
+    int M;
+    double N;
+    int s;
+public:
+    EigenEnergyFiniteN(int M, double N) { this->M = M; this->N = N; this->s = 1; }
+
+    // calculate all eigen energies and eigenstates using EigenLibrary
+	// and save the results to files. The file name for eigen energies data 
+	// is of the form  EEs=1M=5.txt and the one for eigen states is of the form
+	// ESs=1M=5.txt. 
+	// invN: the value of 1/N, should be very small
+    // buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
+    // calcEigenvector: true to calculate eigenvectors as well, otherwise only calculate eigenvalues.
+	void CalculateByEigen(int buckets = 0, bool calcEigenvector = true);
+
+    // calculate thermodynamics of string bit for M=1,2,..,N.
+    // the partition function Z is the sum of indidual Z of each M.
+    // T0: the string tension.
+    // maxB: max value of beta, beta = 1/temperatur, the min value of beta is 0.0
+    // datafolder: the path to the foler that contains energy eigenvalue data.
+    // steps: how many data sets to calculate. The interval between two connective data sets is maxB/steps.
+    void CalculateThermoForN(double T0, double maxB, string datafolder, int steps = 100);
 };
 

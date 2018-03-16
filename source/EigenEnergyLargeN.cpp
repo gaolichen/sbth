@@ -342,7 +342,7 @@ void EigenEnergyLargeN::BuildStatesByBoth()
     }
 }
 
-i64 EigenEnergyLargeN::TotalSize(vector<TE>& v)
+i64 TotalSize(vector<TE>& v)
 {
     i64 tot = 0;
     for (int i = 0; i < v.size(); i++)
@@ -352,7 +352,7 @@ i64 EigenEnergyLargeN::TotalSize(vector<TE>& v)
     return tot;
 }
 
-void EigenEnergyLargeN::Collect(vector<TE>& v)
+void Collect(vector<TE>& v)
 {
     int saved = 0;
     for (int i = 1; i < v.size(); i++)
@@ -370,7 +370,7 @@ void EigenEnergyLargeN::Collect(vector<TE>& v)
     v.resize(saved + 1);
 }
 
-void EigenEnergyLargeN::MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res)
+void MergeEnergy(vector<TE>& a, vector<TE>& b, vector<TE>& res)
 {
     for (int i = 0; i < a.size(); i++)
     {
@@ -419,7 +419,7 @@ void EigenEnergyLargeN::CalculateThermo(double T0, double maxB, int steps)
     ofs.close();
 }
 
-void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, string datafolder, int steps)
+void EigenEnergyFiniteN::CalculateThermoForN(double T0, double maxB, string datafolder, int steps)
 {
     double minB = .0;
     double delta = (maxB - minB) / steps;
@@ -436,7 +436,7 @@ void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, string dataf
         if (bit > 8)
         {
             // load from file.
-            string input = datafolder + "/EEs=" + ToString(s) + "M=" + ToString(bit) + "N=" + ToString(M) + ".txt";
+            string input = datafolder + "/EEs=" + ToString(s) + "M=" + ToString(bit) + "N=" + ToString(N) + ".txt";
             ifstream ifs(input.c_str());
 
             cout << "file: " << input << " " << (ifs.good() ? "good" : "fuck") << endl;
@@ -460,7 +460,7 @@ void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, string dataf
         else
         {
             // compute with eigen.
-            Eigen::MatrixXcd mat = h0.ToMatrixN(bit, Boson, 1.0/M);
+            Eigen::MatrixXcd mat = h0.ToMatrixN(bit, Boson, 1.0/N);
 	        Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver;
             solver.compute(mat, false);
 	        Eigen::VectorXcd values = solver.eigenvalues();
@@ -479,7 +479,7 @@ void EigenEnergyLargeN::CalculateThermoForN(double T0, double maxB, string dataf
     cout << "Total number of energies states = " << energies.size() << endl;
 
     // then we calculate thermodynamics and save the results to file.
-    string file = "THs=" + ToString(s) + "N=" + ToString(M) + "T0=" + ToString(T0) + ".txt";
+    string file = "THs=" + ToString(s) + "N=" + ToString(N) + "T0=" + ToString(T0) + ".txt";
 	ofstream ofs(file.c_str());
 
     //ofs << "T Z Energy Entropy" << endl;
@@ -547,7 +547,7 @@ void EigenEnergyLargeN::CalcFluctuation(double beta)
     ofs.close();
 }
 
-vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<TE>& states, int buckets, double range)
+vector<DegEnergy> BucketEnergies(vector<TE>& states, int buckets, double range)
 {
     double delta = range * 2 / buckets;
 	vector<DegEnergy> res;
@@ -567,7 +567,7 @@ vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<TE>& states, int buck
     return res;
 }
 
-vector<DegEnergy> EigenEnergyLargeN::BucketEnergies(vector<double>& states, int buckets, double range)
+vector<DegEnergy> BucketEnergies(vector<double>& states, int buckets, double range)
 {
     double delta = range * 2 / buckets;
 	vector<DegEnergy> res;
@@ -650,7 +650,7 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 }
 
 
-void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEigenvector)
+void EigenEnergyFiniteN::CalculateByEigen(int buckets, bool calcEigenvector)
 {
 	if (s != 1)
 	{
@@ -658,11 +658,7 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEige
 		return;
 	}
 
-	string file = "s=" + ToString(s) + "M=" + ToString(M);
-	if (abs(invN) > EPS)
-	{
-		file += "N=" + ToString((int)floor(1/invN + .5));
-	}
+	string file = "s=" + ToString(s) + "M=" + ToString(M) + "N=" + ToString(N);;
 	
 	// file1 to save eigenvalues. 
 	string file1 = "EE" + file;
@@ -677,7 +673,7 @@ void EigenEnergyLargeN::CalculateByEigen(double invN, int buckets, bool calcEige
 	
 	// calculate eigenvalues and eigenvectors.
 	H0Hamiltonian h0;
-	Eigen::MatrixXcd mat = h0.ToMatrixN(M, Boson, invN);
+	Eigen::MatrixXcd mat = h0.ToMatrixN(M, Boson, 1.0/N);
 	Eigen::ComplexEigenSolver<Eigen::MatrixXcd> solver;
     solver.compute(mat, calcEigenvector);
 	Eigen::VectorXcd values = solver.eigenvalues();

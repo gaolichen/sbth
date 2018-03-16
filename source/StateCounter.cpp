@@ -110,6 +110,7 @@ void StateCounter::Init()
 void StateCounter::InitNoHalfMode()
 {
 	noHalfMode.resize(MAX_BIT_TO_COUNT / 2 + 1, 0);
+    withHalfMode.resize(MAX_BIT_TO_COUNT / 2 + 1, 0);
 	for (int M = 2; M <= MAX_BIT_TO_COUNT; M += 2)
 	{
 		vector<vector<snum> > num(2, vector<snum>(M, 0));
@@ -130,6 +131,7 @@ void StateCounter::InitNoHalfMode()
 		}
 
 		noHalfMode[M / 2] = num[prev][M / 2];
+        withHalfMode[M / 2] = num[prev][0];
 	}
 }
 
@@ -141,6 +143,14 @@ void StateCounter::InitAverageEnergy()
     for (int i = 2; i <= MAX_BIT_TO_COUNT; i += 2)
     {
         aveESingle[i / 2] = 4 - 8 * NoHalfMode(i) / (long double)SingleTrace(i);
+/*        snum a = noHalfMode[i/2];
+        snum b = withHalfMode[i/2];
+        snum c = b - a;
+        snum d = b + a;
+        snum e = Gcd(c, d);
+        c /= e;
+        d /= e;
+        cout << i << "\t" << 4 * c << '/' << d << "=" << aveESingle[i / 2] << endl;*/
     }
 }
 

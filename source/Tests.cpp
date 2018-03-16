@@ -198,6 +198,7 @@ void Tests::DemoAverageEnergy()
 
 void Tests::Run()
 {
+    cout << ToString(2.5) << endl;
     Tests test1(1);
     test1.SingleTraceEnergies_StateNumber(7);
     test1.MultiTraceEigenEnergies_StateNumber(11);
