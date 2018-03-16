@@ -290,13 +290,6 @@ void CalculateAllEigenvalues(int spin, int bits, int buckets)
     //ee.CalcFluctuation(1.5);
 }
 
-void CalculateAllEigenvaluesByEigen(int bits, int N, int buckets)
-{
-    cout << "Calculating large N energies for bits=" << bits << " ..." << endl;
-	EigenEnergyFiniteN ee(bits, (double)N);
-    ee.CalculateByEigen(buckets, false);
-}
-
 void SaveSingleEnergies(int s, int M, int buckets = 0)
 {
     cout << "Calculating large N single-trace energies for s= " << s << " bits=" << M << " ..." << endl;
@@ -314,11 +307,18 @@ void CalculateThermodynamics(int bits, double T0, double maxB, int steps = 100)
     ee.CalculateThermo(T0, maxB, steps);
 }
 
+void CalculateAllEigenvaluesByEigen(int bits, int N, int buckets)
+{
+    cout << "Calculating large N energies for bits=" << bits << " ..." << endl;
+	EigenEnergyFiniteN ee(bits, (double)N);
+    ee.SaveEnergies(buckets, false);
+}
+
 void CalculateThermodynamicsForN(int N, double T0, double maxB, string datafolder, int steps = 1000)
 {
     cout << "Calculating thermodynamics for N=" << N << " ..." << endl;
 	EigenEnergyFiniteN ee(N, (double)N);
-    ee.CalculateThermoForN(T0, maxB, datafolder, steps);
+    ee.SaveThermoData(T0, maxB, datafolder, steps);
 }
 
 int main(int argc, char* argv[])

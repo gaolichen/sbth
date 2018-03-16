@@ -218,7 +218,7 @@ public:
 	// invN: the value of 1/N, should be very small
     // buckets: number of buckets the energies are divided into. buckets = 0 means do not bucket.
     // calcEigenvector: true to calculate eigenvectors as well, otherwise only calculate eigenvalues.
-	void CalculateByEigen(int buckets = 0, bool calcEigenvector = true);
+	void SaveEnergies(int buckets = 0, bool calcEigenvector = true);
 
     // calculate thermodynamics of string bit for M=1,2,..,N.
     // the partition function Z is the sum of indidual Z of each M.
@@ -226,6 +226,6 @@ public:
     // maxB: max value of beta, beta = 1/temperatur, the min value of beta is 0.0
     // datafolder: the path to the foler that contains energy eigenvalue data.
     // steps: how many data sets to calculate. The interval between two connective data sets is maxB/steps.
-    void CalculateThermoForN(double T0, double maxB, string datafolder, int steps = 100);
+    void SaveThermoData(double T0, double maxB, string datafolder, int steps = 100);
 };
 

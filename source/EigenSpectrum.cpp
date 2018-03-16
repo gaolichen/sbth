@@ -569,7 +569,7 @@ void EigenEnergyLargeN::SaveEnergies(int buckets)
 
 /// functions of EigenEnergyFiniteN class.
 
-void EigenEnergyFiniteN::CalculateThermoForN(double T0, double maxB, string datafolder, int steps)
+void EigenEnergyFiniteN::SaveThermoData(double T0, double maxB, string datafolder, int steps)
 {
     double minB = .0;
     double delta = (maxB - minB) / steps;
@@ -664,7 +664,7 @@ void EigenEnergyFiniteN::CalculateThermoForN(double T0, double maxB, string data
 
 
 
-void EigenEnergyFiniteN::CalculateByEigen(int buckets, bool calcEigenvector)
+void EigenEnergyFiniteN::SaveEnergies(int buckets, bool calcEigenvector)
 {
 	if (s != 1)
 	{
