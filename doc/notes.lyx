@@ -2030,6 +2030,122 @@ A & =M\int_{0}^{1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\r
 \end_inset
 
 
+\begin_inset Formula 
+\begin{align*}
+A & =M\int_{0}^{1}\ln\left(1+\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)\right)dx\\
+ & =M\int_{0}^{1}da\int_{0}^{1}\frac{\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}{1+a\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}dx\\
+ & \equiv M\int_{0}^{1}daB
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+B & =\int_{0}^{1}\frac{\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}{1+a\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}dx\\
+ & =\int_{0}^{1}\frac{\exp\left(-i\alpha\theta\sin\pi\left(1-x\right)+2\pi ikx\right)}{1+a\exp\left(-i\alpha\theta\sin\pi\left(1-x\right)+2\pi ikx\right)}dx\\
+ & =-\int_{1}^{0}\frac{\exp\left(-i\alpha\theta\sin\pi t+2\pi ik\left(1-t\right)\right)}{1+a\exp\left(-i\alpha\theta\sin\pi t+2\pi ik\left(1-t\right)\right)}dt\\
+ & =\int_{0}^{1}\frac{\exp\left(-i\alpha\theta\sin\pi t-2\pi ikt\right)}{1+a\exp\left(-i\alpha\theta\sin\pi t-2\pi ikt\right)}dt\\
+ & =\int_{0}^{1}\frac{\exp\left(-i\alpha\theta\sin\pi x-2\pi ikx\right)}{1+a\exp\left(-i\alpha\theta\sin\pi x-2\pi ikx\right)}dx
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+B & =\int_{0}^{1}\frac{\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}{1+a\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}dx\\
+ & =-\int_{0}^{-1}\frac{\exp\left(i\alpha\theta\sin x\pi-2\pi ikx\right)}{1+a\exp\left(i\alpha\theta\sin x\pi-2\pi ikx\right)}dx\\
+ & =\int_{1}^{2}\frac{\exp\left(i\alpha\theta\sin\left(1-t\right)\pi-2\pi ik\left(1-t\right)\right)}{1+a\exp\left(i\alpha\theta\sin\left(1-t\right)\pi-2\pi ik\left(1-t\right)\right)}dt\\
+ & =\int_{1}^{2}\frac{\exp\left(i\alpha\theta\sin t\pi+2\pi ikt\right)}{1+a\exp\left(i\alpha\theta\sin t\pi+2\pi ikt\right)}dt
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+B & =\int_{0}^{1}\frac{\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}{1+a\exp\left(-i\alpha\theta\sin x\pi+2\pi ikx\right)}dx\\
+ & =\sum_{n=0}^{\infty}\left(-\right)^{n}\int_{0}^{1}a^{n}\exp\left(-i\alpha\theta n\sin x\pi+2\pi iknx\right)dx\\
+ & =\sum_{n=0}^{\infty}\left(-\right)^{n}\frac{1}{2\pi i}\int_{0}^{1}a^{n}\exp\left(-\frac{\alpha\theta n}{2}\left(\sqrt{z}-\frac{1}{\sqrt{z}}\right)\right)z^{nk-1}dz\\
+ & =\sum_{n=0}^{\infty}\left(-\right)^{n}\frac{1}{2\pi i}\oint_{\left|z\right|=1}a^{n}\sum_{m=-\infty}^{\infty}J_{m}\left(-\alpha\theta n\right)z^{\frac{m}{2}+nk-1}dz\\
+ & =\sum_{n=0}^{\infty}\sum_{m=-\infty}^{\infty}\left(-\right)^{n}\frac{1}{2\pi}a^{n}J_{m}\left(-\alpha\theta n\right)\int_{0}^{2\pi}e^{i\phi\left(\frac{m}{2}+nk\right)}d\phi\\
+ & =\sum_{n=0}^{\infty}\left(-\right)^{n}a^{n}J_{-2nk}\left(-\alpha\theta n\right)+\sum_{n=0}^{\infty}\sum_{m=-\infty}^{\infty}\left(-\right)^{n}\frac{1}{2\pi}a^{n}J_{m}\left(-\alpha\theta n\right)\frac{1}{i\left(\frac{m}{2}+nk\right)}e^{i\phi\left(\frac{m}{2}+nk\right)}\Bigg|_{0}^{2\pi}\\
+ & =\sum_{n=0}^{\infty}\left(-\right)^{n}a^{n}J_{-2nk}\left(-\alpha\theta n\right)+\sum_{n=0}^{\infty}\sum_{m=-\infty,\mathrm{odd}}^{\infty}\left(-\right)^{n}\frac{1}{\pi}a^{n}J_{m}\left(-\alpha\theta n\right)\frac{-1}{i\left(\frac{m}{2}+nk\right)}\\
+ & =\sum_{n=0}^{\infty}\left(-\right)^{n}a^{n}J_{-2nk}\left(-\alpha\theta n\right)+\sum_{n=0}^{\infty}\sum_{m=-\infty,\mathrm{odd}}^{\infty}\left(-\right)^{n}\frac{1}{\pi}\frac{ia^{n}}{\frac{m}{2}+nk}J_{m}\left(-\alpha\theta n\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+A & =M\int_{0}^{1}Bda\\
+ & =\sum_{n=0}^{\infty}\frac{\left(-\right)^{n}}{n+1}J_{-2nk}\left(-\alpha\theta n\right)+\sum_{n=0}^{\infty}\sum_{m=-\infty,\mathrm{odd}}^{\infty}\frac{\left(-\right)^{n}}{n+1}\frac{1}{\pi}\frac{i}{\frac{m}{2}+nk}J_{m}\left(-\alpha\theta n\right)
+\end{align*}
+
+\end_inset
+
+ Since 
+\begin_inset Formula $A$
+\end_inset
+
+ is a function of 
+\begin_inset Formula $\alpha\theta$
+\end_inset
+
+,
+\begin_inset Formula 
+\begin{align*}
+\rho\left(E\right) & =\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\frac{d}{d\alpha}\int\frac{d\theta}{2\pi}\frac{i}{\theta}e^{iE\theta}\exp\left(A\right)\Bigg|_{\alpha=1}\\
+ & =\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\int\frac{d\theta}{2\pi}ie^{iE\theta}\exp\left(A\right)A^{\prime}\Bigg|_{\alpha=1}\\
+ & =\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\int\frac{1}{2\pi}ie^{iE\theta}\frac{1}{\alpha}d\exp\left(A\right)\Bigg|_{\alpha=1}\\
+ & =\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\frac{i}{2\pi\alpha}\left[e^{iE\theta}\exp\left(A\right)\Bigg|_{\theta=-\infty}^{\theta=\infty}-\int\exp\left(A\right)iEe^{iE\theta}d\theta\Bigg|_{\alpha=1}\right]\\
+ & =\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\frac{i}{2\pi\alpha}\left[e^{iE\theta}\exp\left(A\right)\Bigg|_{\theta=-\infty}^{\theta=\infty}-\int\exp\left(A\right)iEe^{iE\theta}d\theta\Bigg|_{\alpha=1}\right]
+\end{align*}
+
+\end_inset
+
+ We let 
+\begin_inset Formula $E=0$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\[
+\rho\left(0\right)=\frac{1}{M}\sum_{k=0}^{M-1}\left(-\right)^{k\left(M-1\right)}\frac{i}{2\pi}\exp\left(A\right)\Bigg|_{\theta=-\infty}^{\theta=\infty}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+e^{\gamma\left(\sqrt{z}-\frac{1}{\sqrt{z}}\right)} & =e^{\gamma\sqrt{z}}e^{-\gamma\frac{1}{\sqrt{z}}}\\
+ & =\sum_{n=0}\frac{1}{n!}\gamma^{n}z^{\frac{n}{2}}\sum_{m}\frac{1}{m!}\left(-\right)^{m}\gamma^{m}z^{-\frac{m}{2}}\\
+ & =\sum_{n,m=0}\frac{\left(-\right)^{m}}{n!m!}\gamma^{n+m}z^{\frac{n-m}{2}}
+\end{align*}
+
+\end_inset
+
+ Consider the half integer term.
+ Let 
+\begin_inset Formula $n-m=2j+1$
+\end_inset
+
+, then 
+\begin_inset Formula $n=2j+1+m$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+z^{j+\frac{1}{2}}\text{term}=\sum_{m=0}^{\infty}\frac{\left(-\right)^{m}}{\left(2j+1+m\right)!m!}\gamma^{2j+1+2m}z^{j+\frac{1}{2}}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -2084,7 +2200,7 @@ Z\left(M,\beta\right)=\tr e^{-\beta\left(Mm+H\right)}.
  With the eigenvalue density distribution, we can write 
 \begin_inset Formula 
 \[
-Z\left(M,\beta\right)=\int_{-\infty}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)}\rho\left(E\right)dE,
+Z\left(M,\beta\right)=\int_{-\infty}^{\infty}e^{-\beta\frac{Mm+\frac{T_{0}}{m}E}{\sqrt{2}}}\rho\left(E\right)dE,
 \]
 
 \end_inset
@@ -2108,9 +2224,62 @@ reference "eq:E_distr"
  into above, we find 
 \begin_inset Formula 
 \begin{align*}
-Z\left(M,\beta\right) & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{-\infty}^{\infty}e^{-\beta\left(Mm+\frac{T_{0}}{m}E\right)-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}dE\\
- & =\frac{2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{-\infty}^{\infty}e^{-\beta Mm-\frac{\left(E-\mu+\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}-\left(\frac{T_{0}}{m}\beta\sigma^{2}\right)^{2}+2\mu\frac{T_{0}}{m}\beta\sigma^{2}}{2\sigma^{2}}}dE\\
- & =2^{M}e^{-\beta Mm+\left(\frac{T_{0}}{m}\right)^{2}\beta^{2}\sigma^{2}-\frac{T_{0}}{m}\mu\beta}
+Z\left(M,\beta\right) & =\frac{\alpha2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{E_{G}}^{E_{max}}e^{-\beta\frac{Mm+\frac{T_{0}}{m}E}{\sqrt{2}}-\frac{\left(E-\mu\right)^{2}}{2\sigma^{2}}}dE\\
+ & =\frac{\alpha2^{M}}{\sqrt{2\pi\sigma^{2}}}\int_{E_{G}}^{E_{max}}\exp\left[-\frac{\beta}{\sqrt{2}}Mm-\frac{\left(E-\mu+\frac{T_{0}}{m}\frac{\beta}{\sqrt{2}}\sigma^{2}\right)^{2}-\left(\frac{T_{0}}{m}\frac{\beta}{\sqrt{2}}\sigma^{2}\right)^{2}+2\mu\frac{T_{0}}{m}\frac{\beta}{\sqrt{2}}\sigma^{2}}{2\sigma^{2}}\right]dE\\
+ & =\alpha2^{M-1}\exp\left[-\frac{\beta Mm}{\sqrt{2}}+\frac{1}{2}\left(\frac{T_{0}}{m}\right)^{2}\beta^{2}\sigma^{2}-\frac{T_{0}}{m}\mu\frac{\beta}{\sqrt{2}}\right]\left(\mathrm{erf}\left[\frac{E_{\mathrm{max}}-\mu}{\sqrt{2}\sigma}+\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]+\mathrm{erf}\left[\frac{\mu-E_{G}}{\sqrt{2}\sigma}-\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When 
+\begin_inset Formula $M$
+\end_inset
+
+ is odd 
+\begin_inset Formula 
+\[
+E_{G}=-E_{\max}=-4\cot\frac{\pi}{2M},
+\]
+
+\end_inset
+
+ When 
+\begin_inset Formula $M$
+\end_inset
+
+ is even
+\begin_inset Formula 
+\[
+E_{G}=\begin{cases}
+-8\cot\frac{\pi}{M} & M=4k+2\\
+-4\left(\cot\frac{\pi}{M-2}+\cot\frac{\pi}{M+2}\right) & M=4k
+\end{cases},\quad E_{\max}=4\cot\frac{\pi}{2M}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\ln Z\left(M,\beta\right) & =\ln\alpha+\left(M-1\right)\ln2-\frac{\beta Mm}{\sqrt{2}}+\frac{1}{2}\left(\frac{T_{0}}{m}\right)^{2}\beta^{2}\sigma^{2}-\frac{T_{0}}{m}\mu\frac{\beta}{\sqrt{2}}\\
+ & +\ln\left(\mathrm{erf}\left[\frac{E_{\mathrm{max}}-\mu}{\sqrt{2}\sigma}+\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]+\mathrm{erf}\left[\frac{\mu-E_{G}}{\sqrt{2}\sigma}-\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]\right)\\
+ & =\frac{1}{2}\left(\frac{T_{0}}{m^{2}}\right)^{2}\left(\beta m\right)^{2}\sigma^{2}-\frac{\beta m}{\sqrt{2}}\left(M+\frac{T_{0}}{m^{2}}\mu\right)+\ln\alpha+\left(M-1\right)\ln2\\
+ & +\ln\left(\mathrm{erf}\left[\frac{E_{\mathrm{max}}-\mu}{\sqrt{2}\sigma}+\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]+\mathrm{erf}\left[\frac{\mu-E_{G}}{\sqrt{2}\sigma}-\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\left\langle E\right\rangle }{m} & =-\frac{1}{m}\frac{\partial\ln Z}{\partial\beta}\\
+ & =-\left(\frac{T_{0}}{m^{2}}\right)^{2}\left(\beta m\right)\sigma^{2}+\frac{1}{\sqrt{2}}\left(M+\frac{T_{0}}{m^{2}}\mu\right)\\
+ & -\left(\mathrm{erf}\left[\frac{E_{\mathrm{max}}-\mu}{\sqrt{2}\sigma}+\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]+\mathrm{erf}\left[\frac{\mu-E_{G}}{\sqrt{2}\sigma}-\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right]\right)^{-1}\\
+ & \times\frac{1}{\sqrt{\pi}}\frac{T_{0}\sigma}{m}\left(e^{-\left(\frac{E_{\mathrm{max}}-\mu}{\sqrt{2}\sigma}+\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right)^{2}}-e^{-\left(\frac{\mu-E_{G}}{\sqrt{2}\sigma}-\frac{T_{0}}{m}\frac{\beta}{2}\sigma\right)^{2}}\right)
 \end{align*}
 
 \end_inset
